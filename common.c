@@ -2,7 +2,7 @@
 
 #define is_digit(c)	((c) >= '0' && (c) <= '9')
 
-unsigned int StoH(unsigned char * s)
+unsigned int StoH(char * s)
 {
 	unsigned int hdata;
 	int i = 0;
@@ -39,7 +39,7 @@ void mdelay(int cont)
 int atoi(const char *s)
 {
 	int i = 0;
-	if(s==0)
+	if(s==NULL)
 		return 0;
 	while (is_digit(*s))
     {
@@ -50,7 +50,7 @@ int atoi(const char *s)
 	return i;
 }
 
-unsigned int StoD(unsigned char * s)
+unsigned int StoD(char * s)
 {
 	unsigned int hdata;
 	int i = 0;

@@ -75,11 +75,11 @@ int GetTemperature(void)
 }
 int dout_to_temp(int val)
 {
-	int a,b,c,d;
+	int a,b;
 	int temp;
 
 	a =-9*val*val/100;
 	b = 2754*val/10;
 	temp = a+b-44596;
 	return temp;
-}
+} 

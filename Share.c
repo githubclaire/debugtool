@@ -89,7 +89,7 @@ void CToolGetInput(char* buffer, unsigned int size)
 {
     DWORD i, j;
     char ch = 0;
-    char*    chLastCmd = NULL;
+    //char*    chLastCmd = NULL;
     char*      chTemp    = NULL;
     bool      bInputValid = FALSE;
     bool      bUserInput = FALSE;

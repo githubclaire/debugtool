@@ -18,6 +18,7 @@
 #include "main.h"
 #include "pcie.h"
 #include "flash.h"
+#include "share.h"
 #include "cmd.h"
 #include "clk.h"
 #include "ts.h"

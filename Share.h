@@ -45,7 +45,7 @@ typedef struct _CTOOL_HISTORY_CMD
     DWORD              dwCurCmd;
 }CTOOL_HISTORY_CMD, *PCTOOL_HISTORY_CMD;
 
-
+void EchoWait(void);
 void  CToolClearHisCmd(void);
 void CToolGetInput(char* buffer, unsigned int size);
 #endif

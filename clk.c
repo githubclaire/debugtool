@@ -1,9 +1,9 @@
-#include "def.h"s
+#include "def.h"
 
 unsigned int  maxVCO[2] = {1600,2400};
 extern VIDEO_PCI_PROP video_pci_prop;
 
-int log2(unsigned int val)
+int mathlog2(unsigned int val)
 {
 	int i=0;
 	while(val>1)
@@ -140,7 +140,7 @@ void set_epll(int fclk)
     {
         bandNo = 1;
     }
-    OD = log2((unsigned int)(maxVCO[bandNo]/fclk));
+    OD = mathlog2((unsigned int)(maxVCO[bandNo]/fclk));
     if(OD>3)
         OD=3;
     M = (fclk<<OD)/reference_freq - 2;
@@ -225,7 +225,7 @@ void set_vpll(int fclk)
     {
         bandNo = 1;
     }
-    OD = log2((unsigned int)(maxVCO[bandNo]/fclk));
+    OD = mathlog2((unsigned int)(maxVCO[bandNo]/fclk));
     if(OD>3)
         OD=3;
     M = ((fclk<<OD)/reference_freq) - 2;
@@ -270,7 +270,7 @@ void wait_pll_ok(PLL_LOCK pll)
 
 void clk_prog(int argc, char *argv[])
 {
-	int   clk;
+	int  clk;
 
 	if(argc == 2)
 	{
@@ -334,7 +334,7 @@ void clk_prog(int argc, char *argv[])
 
 }
 
-clk_help_info()
+void clk_help_info(void)
 {
     printf("> clock d/e/v: clock d/e/v read.\n");
     printf("> clock e/v data(MHz)]: clock e/v write.\n");

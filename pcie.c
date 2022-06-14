@@ -46,10 +46,14 @@ int find_Base_Addr(configuration config)
 					}
 					
 					video_pci_prop.mapped_mmioBase =(unsigned long *)mmap(0,PAGE_SIZE,PROT_READ|PROT_WRITE,MAP_SHARED,fb,video_pci_prop.MmioBase);				
-                    printf("PCIE mapped MMIOBase = %x\n",video_pci_prop.mapped_mmioBase);
-                    if(video_pci_prop.mapped_mmioBase == NULL)
+                    printf("PCIE mapped MMIOBase = %x\n",(unsigned int)video_pci_prop.mapped_mmioBase);
+                    if(video_pci_prop.mapped_mmioBase == 0)
 					{
 						printf("Can't mmap!\n");
+					}
+					else
+					{
+						return 1;
 					}
 
 				}
@@ -61,6 +65,7 @@ int find_Base_Addr(configuration config)
 			}															
 		}
 	}
+	return 0;
 }
 
 void read_PCIe(unsigned long mapped_base)

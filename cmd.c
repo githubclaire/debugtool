@@ -18,7 +18,7 @@ DBG_CMD_STRUCT dbg_cmd_table[] = {
 #define DBG_CMD_TABLE_SIZE (sizeof(dbg_cmd_table) / sizeof(DBG_CMD_STRUCT))
 void CToolParserCmd(void)
 {
-	unsigned char*   line;
+	char*   line;
 
 	line = (char*)malloc(STRINGBUFFERSIZE);
 	memset(line, 0, STRINGBUFFERSIZE);
@@ -37,7 +37,7 @@ void CToolParserCmd(void)
 
 }
 
-int ProcessString(unsigned char* buffer) // return 0 if quit, else return 1
+int ProcessString(char* buffer) // return 0 if quit, else return 1
 {
 	int    bStatus;
 	int    i;
@@ -87,7 +87,7 @@ int ProcessString(unsigned char* buffer) // return 0 if quit, else return 1
 return bStatus;
 }
 
-int do_dbg_mmio(unsigned char * cmd[], unsigned int param_count)
+int do_dbg_mmio(char * cmd[], unsigned int param_count)
 {
     unsigned int 	reg_index;
 	unsigned int 	reg_data;
@@ -110,20 +110,22 @@ int do_dbg_mmio(unsigned char * cmd[], unsigned int param_count)
 		printf("\nParse Error!\n");
 	}
 	
-	return 1;
+	return TRUE;
 }
 
-int do_dbg_ts(unsigned char * cmd[], unsigned int param_count)
+int do_dbg_ts(char * cmd[], unsigned int param_count)
 {
     printf("Temp : %d C\n",dout_to_temp(GetTemperature())/1000);
+	return TRUE;
 }
 
-int do_dbg_voltage(unsigned char * cmd[], unsigned int param_count)
+int do_dbg_voltage(char * cmd[], unsigned int param_count)
 {
     printf("voltage : %d mV\n",( GetVoltage()*1000+1157200)/1869);
+	return TRUE;
 }
 
-int do_dbg_print_info(unsigned char * cmd[], unsigned int param_count)
+int do_dbg_print_info(char * cmd[], unsigned int param_count)
 {
     sf_init(video_pci_prop.mapped_mmioBase);
     read_fw_version();
@@ -136,17 +138,19 @@ int do_dbg_print_info(unsigned char * cmd[], unsigned int param_count)
     printf("voltage : %d mV\n",( GetVoltage()*1000+1157200)/1869);     
 }
 
-int do_dbg_flash(unsigned char * cmd[], unsigned int param_count)
+int do_dbg_flash(char * cmd[], unsigned int param_count)
 {
     //sf_flash_test(param_count,cmd);
+	return TRUE;
 }
 
-int do_dbg_mem_test(unsigned char * cmd[], unsigned int param_count)
+int do_dbg_mem_test(char * cmd[], unsigned int param_count)
 {
     chip_mem_connection_test(param_count,cmd);
+	return TRUE;
 }
 
-int do_dbg_program_fw(unsigned char * cmd[], unsigned int param_count)
+int do_dbg_program_fw(char * cmd[], unsigned int param_count)
 {
     sf_init(video_pci_prop.mapped_mmioBase);
     if(strcmp(cmd[1],"-p")==0 || strcmp(cmd[1],"-P")==0)
@@ -157,20 +161,22 @@ int do_dbg_program_fw(unsigned char * cmd[], unsigned int param_count)
     {
         dump_vbios(cmd[2]);
     }
+	return TRUE;
 }
 
-int do_dbg_clk(unsigned char * cmd[], unsigned int param_count)
+int do_dbg_clk(char * cmd[], unsigned int param_count)
 {
     clk_prog(param_count,cmd);
+	return TRUE;
 }
 
-int do_dbg_help(unsigned char * cmd[], unsigned int param_count)
+int do_dbg_help(char * cmd[], unsigned int param_count)
 {
 	helpinfo();
 	return TRUE;
 }
 
-int do_dbg_quit(unsigned char * cmd[], unsigned int param_count)
+int do_dbg_quit(char * cmd[], unsigned int param_count)
 {
     return FALSE;
 }

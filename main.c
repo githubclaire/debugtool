@@ -1,5 +1,6 @@
 #include "def.h"
 
+
 VIDEO_PCI_PROP video_pci_prop;
 
 
@@ -25,12 +26,6 @@ static int handler(void* user, const char* section, const char* name, const char
 
 int main(int argc, char *argv[])
 {
-	unsigned int addrIndex=0;
-	unsigned int addr;
-	unsigned int data;
-	unsigned int num = 1;
-	unsigned int val;
-    unsigned char channel=0;
     configuration config;
 
 
@@ -42,10 +37,16 @@ int main(int argc, char *argv[])
 
     printf("Config loaded from 'config.ini': vendorid=%x, deviceid=%x\n", config.vendorid, config.deviceid);
 
-    find_Base_Addr(config);
-
-    CToolParserCmd();
-	return ;
+    if(find_Base_Addr(config))
+    {
+        CToolParserCmd();
+    }
+    else
+    {
+        //load mmio base from config.ini
+    }
+    
+	return 1;
 }
 
 			
