@@ -37,7 +37,7 @@ $(EXECUTABLE) : $(OBJS)
 #	$(LD) $(CFLAGS) $(CFILE) $(AFILE) -o $@ $(LDFLAGS)
 	$(LD) $(OBJS) -o $@ $(LDFLAGS)
 
-$(OBJTREE)%.o : %.c $(DEPDIR)/%.d #| $(DEPDIR)
+$(OBJTREE)%.o : %.c $(DEPDIR)/%.d | $(DEPDIR)
 	@echo "[CC] $@"
 	$(CC) $(DEPFLAGS) $(CFLAGS) -c $< -o $@
 	$(POSTCOMPILE)
@@ -49,6 +49,7 @@ $(DEPDIR):
 clean:
 	@echo "cleaning."
 	@rm -f $(EXECUTABLE) $(DEPDIR)/*.d $(OBJTREE)*.o
+	@rmdir $(DEPDIR) $(OBJTREE)
 
 DEPFILES := $(COBJS:%.o=$(DEPDIR)/%.d)
 $(DEPFILES):
