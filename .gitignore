@@ -1,3 +1,4 @@
 *.o
 *.d
+*.log
 glenfly_tool_debug

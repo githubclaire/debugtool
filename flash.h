@@ -28,11 +28,13 @@
 #define FW_MD5_VALUE_SIZE 16
 
 void flash_vbios(char *romImageName);
-int dump_vbios(char *romImageName);
-void MD5_Caculate(char* romImage_Name2,char *Ptr,char *MD5Value);
+int dump_vbios(char *romImageName, unsigned int dump_file_size);
+void MD5_Caculate(char* romImage_Name2,unsigned char *MD5Value);
 void Generate_new_Rom_file_without_MD5(char *romImageName1,char* romImageName2);
-char* Get_ROM_MD5_Value(char* romImageName);
+unsigned char* Get_ROM_MD5_Value(char* romImageName);
 void Check_Rom_Device_Id(char* romImageName);
 int isMD5check(char* romImageName);
-char* read_info_from_file(char *filename, unsigned int seeknum, unsigned int readsize);
+unsigned char* read_info_from_file(char *filename, unsigned int seeknum, unsigned int readsize);
+int FlashRom(FILE *pStream, unsigned int dwFileSize);
+unsigned int get_file_Size(char *filename);
 #endif

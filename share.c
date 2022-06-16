@@ -97,6 +97,7 @@ void CToolGetInput(char* buffer, unsigned int size)
     j = i = 0;
     do{
         ch = getchar();
+
         if((ch != KEY_ENTER) && (ch != KEY_BACKSPACE))
         {
             if(ch == KEY_UP_DOWN_PRE)
@@ -106,6 +107,7 @@ void CToolGetInput(char* buffer, unsigned int size)
             }
             if(ch == KEY_UP)
             {
+                //printf("key up excution\n");
                 chTemp = CToolGetCmdFromHis(TRUE);
                 if(chTemp != NULL)
                 {
@@ -133,6 +135,7 @@ void CToolGetInput(char* buffer, unsigned int size)
             }
             else if(ch == KEY_DOWN)
             {
+                //printf("key down excution\n");
                 chTemp = CToolGetCmdFromHis(FALSE);
                 if(chTemp != NULL)
                 {

@@ -34,28 +34,13 @@ int find_Base_Addr(configuration config)
                     printf("BUS_DEV_FUNC is : %.2x:%.2x.%.1x\n",mydev->bus,mydev->dev,mydev->func);
 					video_pci_prop.VenderId = mydev->vendor_id;
 					video_pci_prop.DeviceId = mydev->device_id;
-                    printf("PCIe Vender ID = %x, Device ID = %x\n",video_pci_prop.VenderId,video_pci_prop.DeviceId);
+                    printf("PCIe Vender ID = 0x%x, Device ID = 0x%x\n",video_pci_prop.VenderId,video_pci_prop.DeviceId);
 
 					video_pci_prop.MmioBase = pci_read_long(mydev, 0x10) & 0xFFFFFF00;	
-                    printf("PCIE MMIOBase = %x\n",video_pci_prop.MmioBase);
+                    printf("PCIE MMIOBase = 0x%x\n",video_pci_prop.MmioBase);
 
-					int fb = open("/dev/mem",O_RDWR | O_SYNC);				
-					if(fb<0)
-					{
-						printf("Can't open!!\n");
-					}
-					
-					video_pci_prop.mapped_mmioBase =(unsigned long *)mmap(0,PAGE_SIZE,PROT_READ|PROT_WRITE,MAP_SHARED,fb,video_pci_prop.MmioBase);				
-                    printf("PCIE mapped MMIOBase = %x\n",(unsigned int)video_pci_prop.mapped_mmioBase);
-                    if(video_pci_prop.mapped_mmioBase == 0)
-					{
-						printf("Can't mmap!\n");
-					}
-					else
-					{
-						return 1;
-					}
-
+					//if(map_to_system_memory(video_pci_prop.MmioBase, &video_pci_prop.mapped_mmioBase))
+					return TRUE;
 				}
 				else
 				{
@@ -65,13 +50,34 @@ int find_Base_Addr(configuration config)
 			}															
 		}
 	}
-	return 0;
+	return FALSE;
+}
+
+int map_to_system_memory(unsigned long addr)
+{
+	int fb = open("/dev/mem",O_RDWR | O_SYNC);				
+	if(fb<0)
+	{
+		printf("Can't open!!\n");
+		return FALSE;
+	}
+	
+	video_pci_prop.mapped_mmioBase = (unsigned long)mmap(0,PAGE_SIZE,PROT_READ|PROT_WRITE,MAP_SHARED,fb,addr);				
+	//printf("PCIE mapped MMIOBase = 0x%lx\n",video_pci_prop.mapped_mmioBase);
+	
+	if(video_pci_prop.mapped_mmioBase == 0)
+	{
+		printf("Can't mmap!\n");
+		return FALSE;
+	}
+
+	return TRUE;
 }
 
 void read_PCIe(unsigned long mapped_base)
 {
     unsigned int pcie_info_addr = 0x8070;
-    unsigned int pcie_info = *(unsigned long *)(mapped_base + pcie_info_addr);
+    unsigned int pcie_info = *(unsigned int *)(mapped_base + pcie_info_addr);
 				
     printf("PCIe Speed : ");
     switch ((pcie_info & 0x000f0000)>>16)
@@ -86,7 +92,9 @@ void read_PCIe(unsigned long mapped_base)
             break;
     }
 
-    printf("PCIe Width : x%d\n",(pcie_info & 0x0ff00000)>>20);
+	unsigned int pcie_width = (pcie_info & 0x0ff00000)>>20;
+
+    printf("PCIe Width : x%d\n", pcie_width);
 }
 
 void read_fw_version(void)

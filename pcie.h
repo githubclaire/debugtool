@@ -28,6 +28,6 @@ int find_Base_Addr(configuration config);
 void read_fw_version(void);
 void read_bitwidth(unsigned long mapped_base);
 void read_PCIe(unsigned long mapped_base);
-
+int map_to_system_memory(unsigned long addr);
 
 #endif

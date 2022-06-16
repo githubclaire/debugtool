@@ -1,5 +1,5 @@
 
-#include "spi_flash.h"
+#include "def.h"
 #include <stdio.h>
 
 
@@ -295,6 +295,26 @@ void sf_sector_erase(unsigned int addr)
 	}
 }
 
+void sf_flash_test(int argc, char *argv[])
+{
+	int sector_num = 1;
+
+    if(strcmp(argv[1],"-f")==0 || strcmp(argv[1],"-F")==0)
+    {
+		if(argc==3)
+		{
+			sector_num = atoi(argv[2]);
+		}
+        sf_sector_erase(sector_num*FP_SECTOR_SIZE);
+    }
+}
+
+void sf_help_info(void)
+{
+	printf("> sf -w addr data [len]: write spi flash data.\n");
+	printf("> sf -r addr [len]: read spi flash data.\n");
+	printf("> sf -f sector_num: erase spi flash.\n");
+}
 /*void writel(unsigned int data,unsigned long MmioBaseAddr)
 {
 	*(unsigned long *)(MmioBaseAddr) = data;

@@ -302,7 +302,7 @@ void clk_prog(int argc, char *argv[])
 	}
 	else if(argc == 3)
 	{		
-		clk = StoD(argv[2]);
+		clk = atoi(argv[2]);
 		if (strcmp(argv[1], "e") == 0)
 		{	
             set_epll(clk*2);

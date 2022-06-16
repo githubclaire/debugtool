@@ -4,18 +4,22 @@ extern VIDEO_PCI_PROP video_pci_prop;
 
 DBG_CMD_STRUCT dbg_cmd_table[] = {
 	{"?", do_dbg_help},
+	{"q", do_dbg_quit},
 	{"help", do_dbg_help},
 	{"mmio", do_dbg_mmio},
 	{"ts", do_dbg_ts},
     {"vcore", do_dbg_voltage},
 	{"sf", do_dbg_flash},
 	{"prog", do_dbg_program_fw},
+	{"dump", do_dbg_dump_fw},	
 	{"print", do_dbg_print_info},
 	{"clk", do_dbg_clk},  
 	{"memtest", do_dbg_mem_test},        
 };
 
 #define DBG_CMD_TABLE_SIZE (sizeof(dbg_cmd_table) / sizeof(DBG_CMD_STRUCT))
+
+
 void CToolParserCmd(void)
 {
 	char*   line;
@@ -136,11 +140,13 @@ int do_dbg_print_info(char * cmd[], unsigned int param_count)
     printf("Elite Clk : %d MHz\n",get_vepll(EPLL_REG));   
     printf("Temp : %d C\n",dout_to_temp(GetTemperature())/1000);
     printf("voltage : %d mV\n",( GetVoltage()*1000+1157200)/1869);     
+	return true;
 }
 
 int do_dbg_flash(char * cmd[], unsigned int param_count)
 {
-    //sf_flash_test(param_count,cmd);
+	sf_init(video_pci_prop.mapped_mmioBase);
+    sf_flash_test(param_count,cmd);
 	return TRUE;
 }
 
@@ -152,15 +158,41 @@ int do_dbg_mem_test(char * cmd[], unsigned int param_count)
 
 int do_dbg_program_fw(char * cmd[], unsigned int param_count)
 {
+	unsigned int dump_file_size = MAX_VIDEO_ROM_SIZE;
     sf_init(video_pci_prop.mapped_mmioBase);
-    if(strcmp(cmd[1],"-p")==0 || strcmp(cmd[1],"-P")==0)
+	if(param_count>=2)
     {
-        flash_vbios(cmd[2]);
-    }
-    else if(strcmp(cmd[1],"-d")==0 || strcmp(cmd[1],"-D")==0)
+		flash_vbios(cmd[1]);
+	}
+	else
+	{
+		printf("> prog filename: program spi flash.\n");
+	}
+	return TRUE;
+}
+
+int do_dbg_dump_fw(char * cmd[], unsigned int param_count)
+{
+	unsigned int dump_file_size = MAX_VIDEO_ROM_SIZE;
+    sf_init(video_pci_prop.mapped_mmioBase);
+	if(param_count>=2)
     {
-        dump_vbios(cmd[2]);
-    }
+		if(param_count==3)
+		{
+			dump_file_size = atoi(cmd[2]);
+		}
+		else
+		{
+			//read file size from vbios
+		}
+
+		printf("dump file size =%d\n", dump_file_size);
+		dump_vbios(cmd[1],dump_file_size);
+	}
+	else
+	{
+    	printf("> dump filename [filesize(byte)]: dump spi flash file.\n");
+	}
 	return TRUE;
 }
 
@@ -183,6 +215,8 @@ int do_dbg_quit(char * cmd[], unsigned int param_count)
 
 void helpinfo(void)
 {
+    printf("> help/?     --- print help info\n");
+    printf("> q          --- quit\n");
 	printf("> ts         --- print temperature\n");
 	printf("> vcore      --- print vcore\n");    
     printf("> clk        --- read/write clock\n");
@@ -191,3 +225,99 @@ void helpinfo(void)
     printf("> mmio       --- read/write register\n");  
     printf("> print      --- print all information(pcie info/mem info/vcore/clk/temp)\n");
 }
+
+
+/*
+unsigned char GetKey(void)
+{
+	unsigned char key;    
+
+	key = getchar();
+	
+	if (key == 0)
+		key = (0x80 | getchar());
+
+	return key;
+}
+
+void TestCmdLine(void)
+{
+	char    c = 0;
+	char*   buffer;
+	char*   oldbuf;
+	char*   ptr;
+	int  oldbuf_valid = FALSE;
+	int  n;
+
+	buffer = (char*)malloc(sizeof(char) * STRINGBUFFERSIZE);
+	oldbuf = (char*)malloc(sizeof(char) * STRINGBUFFERSIZE);
+
+	while (1) 
+	{
+		printf("\n>");
+		fflush (stdout);
+		ptr = buffer; // reset the buffer pointer
+		n=0;
+
+		// Get the command string
+		while (1) 
+		{
+			c = GetKey();
+	
+			if ((c == 0x8) && (n==0))	// ignore the first BackSpace
+				continue;
+			else if (c == 0x8)	// not the first BackSpace
+			{
+				ptr--;
+				n--;
+				putchar(0x8);
+				putchar(' ');
+				putchar(0x8);
+			}
+			else if ((c== 0xd) || (c==0xa))	//  
+			{
+				*ptr = '\0';	// add a '\0' to the end of the string
+				//save the current buffer to old buffer
+				strcpy(oldbuf, buffer);
+				oldbuf_valid=TRUE;
+				break;
+			}
+			else if ((c < 0x20) || (c > 0x7f)) 	// not a character
+			{
+				if ((c==F3KEY)&&oldbuf_valid)	// "F3", find the previous command
+				{
+					while (n--) 
+					{
+						putchar(0x8);
+						putchar(' ');
+						putchar(0x8);
+					}
+					n=printf("%s",oldbuf);
+					fflush (stdout);
+					//copy from old buffer to current buffer
+					strcpy(buffer,oldbuf);
+					ptr = (unsigned char *) &buffer[n];
+				}
+				continue;
+			}
+			else 
+			{
+				if (ptr <= &buffer[198]) 
+				{
+					*ptr++ = c;
+					putchar(c);
+					n++;
+				}
+			}
+		}
+		if(ProcessString(buffer)==0)
+		{	
+			break;
+		}
+
+	}
+
+	free(oldbuf);
+	
+}
+*/

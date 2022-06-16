@@ -6,11 +6,11 @@
 #define KEY_ENTER                   (0x0A)
 #define KEY_BOTTOMLINE              (95)
 #define KEY_SPACE                   (32)
-#define KEY_UP_DOWN_PRE   (0)
-#define KEY_UP                        (72)
-#define KEY_DOWN                  (80)
-#define KEY_LEFT                     (75)
-#define KEY_RIGHT                  (77)
+#define KEY_UP_DOWN_PRE             (0)
+#define KEY_UP                      (43) //key plus instead key up
+#define KEY_DOWN                    (72) 
+#define KEY_LEFT                    (75)
+#define KEY_RIGHT                   (77)
 #define  HISTORY_STRING_NUM     10
 
 #define   INVALID_CMD_POINTER   (0xFFFFFFFF)

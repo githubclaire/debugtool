@@ -35,7 +35,7 @@ void mdelay(int cont)
     }
 }
 
-
+/*
 int atoi(const char *s)
 {
 	int i = 0;
@@ -50,7 +50,7 @@ int atoi(const char *s)
 	return i;
 }
 
-unsigned int StoD(char * s)
+unsigned int StoD(unsigned char * s)
 {
 	unsigned int hdata;
 	int i = 0;
@@ -63,7 +63,7 @@ unsigned int StoD(char * s)
 	}
 	return hdata;
 }
-
+*/
 
 int tolower(int c)  
 {  
@@ -77,28 +77,29 @@ int tolower(int c)
         }  
 } 
 
-int htoi(const char *s)  
+unsigned long htoi(const char *s)  
 {  
     int i;  
-    int n = 0;  
+    unsigned long n = 0;  
     if (s[0] == '0' && (s[1]=='x' || s[1]=='X'))  
-        {  
-            i = 2;  
-        }  
+    {  
+        i = 2;  
+    }  
     else  
-        {  
-            i = 0;  
-        }  
+    {  
+        i = 0;  
+    }  
     for (; (s[i] >= '0' && s[i] <= '9') || (s[i] >= 'a' && s[i] <= 'z') || (s[i] >='A' && s[i] <= 'Z');++i)  
+    {  
+        if (tolower(s[i]) > '9')  
         {  
-            if (tolower(s[i]) > '9')  
-                {  
-                    n = 16 * n + (10 + tolower(s[i]) - 'a');  
-                }  
-            else  
-                {  
-                    n = 16 * n + (tolower(s[i]) - '0');  
-                }  
+            n = 16 * n + (10 + tolower(s[i]) - 'a');  
         }  
+        else  
+        {  
+            n = 16 * n + (tolower(s[i]) - '0');  
+        }  
+    }  
+
     return n;  
 }  

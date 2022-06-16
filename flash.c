@@ -7,20 +7,20 @@ FILE *OpenFileUser(char *szFname, char *szMode)
     return fopen(szFname, szMode);
 }
 
-long file_Size(char *filename)
+unsigned int get_file_Size(char *filename)
 {
 	struct stat statbuf;
 	stat(filename,&statbuf);
-	long fileSize = statbuf.st_size;
+	unsigned int fileSize = statbuf.st_size;
 	return fileSize;
 }
 
-int FlashRom(FILE *pStream, long dwFileSize)
+int FlashRom(FILE *pStream, unsigned int dwFileSize)
 {
     int i,j;
     unsigned char pBuffer[FP_SECTOR_SIZE];
     unsigned int readdata;
-    unsigned long sectorNum;
+    unsigned int sectorNum;
     
     fseek(pStream, 0, SEEK_SET);
     //  base on file size, round up to an integer of sector num  
@@ -61,8 +61,8 @@ int FlashRom(FILE *pStream, long dwFileSize)
             //sf_write_data(j*FP_SECTOR_SIZE +i,*(unsigned int *)(pBuffer + i),4);
         }
 
-        if((j*100/sectorNum)%10==0)
-            printf("%d%%\n",(int)(j*100/sectorNum));
+        if(((j+1)*100/sectorNum)%20==0)
+            printf("%d%%\n",(int)((j+1)*100/sectorNum));
         //bWriteOk = SectorWriteSerialChip(&pChipInfo->fpInfo, pBuffer);
     }
     printf("%d%%\n",100);
@@ -73,19 +73,13 @@ void flash_vbios(char *romImageName)
 {
     char *tempImage = "GFINIT.ROM";
     int is_md5_rom = 0;
-    long rom_file_size;
-    char *Ptr = NULL;
-    char *Value_MD5 = (char *)malloc(FW_MD5_VALUE_SIZE*sizeof(char));
+    unsigned int rom_file_size;
+    unsigned char *Value_MD5 = (unsigned char *)malloc(FW_MD5_VALUE_SIZE*sizeof(unsigned char));
     FILE *file_rom = NULL;
 
-    Ptr =(char *)malloc(MAX_VIDEO_ROM_SIZE*sizeof(char));
-    if (Ptr==NULL)
-    {
-	    printf("ptr malloc is wrong");
-        exit(GENERAL_FILE_ERROR);
-    }
+    memset(Value_MD5,0,FW_MD5_VALUE_SIZE);
 
-    printf("Check Rom Device Id:\n");
+    
     Check_Rom_Device_Id(romImageName);
 
     is_md5_rom = isMD5check(romImageName);
@@ -93,7 +87,7 @@ void flash_vbios(char *romImageName)
     {
         Value_MD5 = Get_ROM_MD5_Value(romImageName);
         Generate_new_Rom_file_without_MD5(romImageName,tempImage);
-        MD5_Caculate(tempImage,Ptr,Value_MD5);
+        MD5_Caculate(tempImage,Value_MD5);
         if(remove(tempImage) == 0)
             printf("Removed %s.\n", tempImage);
         else
@@ -104,7 +98,6 @@ void flash_vbios(char *romImageName)
         printf("Use Checksum Verification!\n");
     }
 
-
     if ((file_rom = OpenFileUser(romImageName, "rb")) == NULL)
     {
         printf("Can't open rom %s\n",romImageName);
@@ -112,8 +105,8 @@ void flash_vbios(char *romImageName)
     }
     else
     {
-        rom_file_size = file_Size(romImageName);
-        printf("Program rom file size = %ld\n",rom_file_size);
+        rom_file_size = get_file_Size(romImageName);
+        printf("Program rom file size = %d\n",rom_file_size);
 
         if(FlashRom(file_rom,rom_file_size)==0)
         {
@@ -128,24 +121,23 @@ void flash_vbios(char *romImageName)
 
 }
 
-int dump_vbios(char *romImageName) 
+int dump_vbios(char *romImageName, unsigned int dump_file_size) 
 {
     unsigned char pBuffer[FP_SECTOR_SIZE];
-    long i,j;
-    unsigned long sectorNum;
-    unsigned int dump_file_size;
+    unsigned int i,j;
+    unsigned int sectorNum;
+    //unsigned int dump_file_size;
     FILE *pStream;
 
+    memset(pBuffer,0,FP_SECTOR_SIZE);
     if ((pStream = OpenFileUser(romImageName, "wb+")) == NULL)
     {
         printf("Can't creat file %s\n",romImageName);
         return FALSE;
     } 
-
-    //dump_file_size = sf_read_data(,);
-
-    sectorNum = (MAX_VIDEO_ROM_SIZE / FP_SECTOR_SIZE);
-    if(MAX_VIDEO_ROM_SIZE>sectorNum*FP_SECTOR_SIZE)
+ 
+    sectorNum = (dump_file_size / FP_SECTOR_SIZE);
+    if(dump_file_size > sectorNum*FP_SECTOR_SIZE)
         sectorNum++;
     for(i=0;i<sectorNum;i++) 
     {
@@ -155,6 +147,8 @@ int dump_vbios(char *romImageName)
         }
         fwrite(pBuffer, sizeof(unsigned char), FP_SECTOR_SIZE, pStream);
         
+        if(((i+1)*100/sectorNum)%20==0)
+            printf("%d%%\n",(int)((i+1)*100/sectorNum));
     }
     fclose(pStream);
     printf("Dump rom from flash successfully!\n");
@@ -162,22 +156,33 @@ int dump_vbios(char *romImageName)
 }  
 
 
-void MD5_Caculate(char* romImage_Name2,char *Ptr,char *MD5Value)
+void MD5_Caculate(char* romImage_Name2,unsigned char *MD5Value)
 {
-    unsigned char decrypt[16]; 
     int i;
     MD5_CTX md5;
-
+    unsigned char* decrypt = (unsigned char*)malloc(FW_MD5_VALUE_SIZE * sizeof(unsigned char));
+    unsigned int noMD5filesize = get_file_Size(romImage_Name2);
+    unsigned char* ptr = (unsigned char *)malloc(noMD5filesize*sizeof(unsigned char));
+    if(ptr==NULL)
+    {
+        printf("ptr malloc is wrong");
+        exit(GENERAL_FILE_ERROR);
+    }
+    
     MD5Init(&md5);
-    Ptr = read_info_from_file(romImage_Name2,0x0,MAX_VIDEO_ROM_SIZE);
-    //printf("\n%s",(char*)(Ptr + 0x24));
-    MD5Update(&md5,Ptr,MAX_VIDEO_ROM_SIZE);
+    ptr = read_info_from_file(romImage_Name2,0x0,noMD5filesize);
+    MD5Update(&md5,ptr,noMD5filesize);
     MD5Final(&md5,decrypt);
+
+    printf("Caculate MD5 Value: ");
+	for ( i =0;i<FW_MD5_VALUE_SIZE;i++)
+    {
+	    printf("%2.2x ",  decrypt[i]);
+	}
+    printf("\n");
 
     for(i=0;i<FW_MD5_VALUE_SIZE;i++)
     {
-        //printf("decrypt:%02x\n",decrypt[i]);
-	    //printf("md5:%2.2x\n",Value_MD5[i]);
         if (MD5Value[i]!=decrypt[i])
         {
             printf("MD5 Error: ROM file caculte not match MD5 !\n");
@@ -185,13 +190,15 @@ void MD5_Caculate(char* romImage_Name2,char *Ptr,char *MD5Value)
         }
     }
     printf("MD5 match: ROM file match MD5 !\n");
-    
+
+    free(ptr);
+    ptr=NULL;
 }
 
 void Generate_new_Rom_file_without_MD5(char *romImageSrc,char* romImageDest)
 {
-    long i;
-    char *pBuffer = (char*)malloc(sizeof(char));
+    unsigned int i;
+    unsigned char *pBuffer = (unsigned char*)malloc(sizeof(unsigned char));
 
     FILE *file_dest;
     FILE *file_src;
@@ -206,29 +213,26 @@ void Generate_new_Rom_file_without_MD5(char *romImageSrc,char* romImageDest)
         printf("Can't open source file %s\n",romImageSrc);
         exit(GENERAL_FILE_ERROR);
     } 
-    long filesize = file_Size(romImageSrc);
+    unsigned int filesize = get_file_Size(romImageSrc);
 
     for(i=0;i<filesize;i++) 
     {
+        fread(pBuffer,sizeof(unsigned char), 1, file_src);
         if(i>=FW_MD5_VALUE_OFFSET && i<FW_MD5_VALUE_OFFSET+FW_MD5_VALUE_SIZE)
         {
             *pBuffer = 0;
         }
-        else
-        {
-            fread(pBuffer,sizeof(char), 1, file_src);
-        }
-        fwrite(pBuffer, sizeof(char), 1, file_dest);   
+        fwrite(pBuffer, sizeof(unsigned char), 1, file_dest);   
     }
 
     fclose(file_src);
     fclose(file_dest);
 }
 
-char* read_info_from_file(char *filename, unsigned int seeknum, unsigned int readsize)
+unsigned char* read_info_from_file(char *filename, unsigned int seeknum, unsigned int readsize)
 {
     FILE *pfile = NULL;
-    char *data = (char *)malloc(readsize*sizeof(char));
+    unsigned char *data = (unsigned char *)malloc(readsize*sizeof(unsigned char));
 
     if ((pfile = OpenFileUser(filename, "rb")) == NULL)
     {
@@ -242,34 +246,40 @@ char* read_info_from_file(char *filename, unsigned int seeknum, unsigned int rea
     return data;
 }
 
-char* Get_ROM_MD5_Value(char* romImageName)
+unsigned char* Get_ROM_MD5_Value(char* romImageName)
 {
-    char *Value_MD5 = malloc(FW_MD5_VALUE_SIZE*sizeof(char));
+    int i;
+    unsigned char *Value_MD5 = malloc(FW_MD5_VALUE_SIZE*sizeof(unsigned char));
     Value_MD5 = read_info_from_file(romImageName,FW_MD5_VALUE_OFFSET,FP_MD5_SIZE);
-    //printf("MD5 Value:\n");
-	//for ( i =0;i<16;i++){
-	//printf("%2.2x\n",  Value_MD5[i]);
-	//}
+
+    printf("ROM MD5 Value: ");
+	for ( i =0;i<FW_MD5_VALUE_SIZE;i++)
+    {
+	    printf("%2.2x ",  Value_MD5[i]);
+	}
+    printf("\n");
+
     return Value_MD5;
 }
 
 void Check_Rom_Device_Id(char* romImageName)
 {
-    char *rom_device_id = (char *)malloc(FW_DEVICE_ID_SIZE*sizeof(char));
+    unsigned char *rom_device_id = (unsigned char *)malloc(FW_DEVICE_ID_SIZE*sizeof(unsigned char));
 
-    rom_device_id = read_info_from_file(romImageName,FW_VENDOR_ID_OFFSET,FW_DEVICE_ID_SIZE);
+    rom_device_id = read_info_from_file(romImageName,FW_DEVICE_ID_OFFSET,FW_DEVICE_ID_SIZE);
 
+    printf("Check Rom Device Id:\n");
     unsigned short vbios_device_id = rom_device_id[1]*256+rom_device_id[0];
     if(vbios_device_id!=video_pci_prop.DeviceId)
     {
-        printf("Device ID not match ROM FILE in offset 0xF00A\n");
-        printf("check device id is %4.4x\n",video_pci_prop.DeviceId);
-        printf("check rom device id is %4.4x\n",vbios_device_id);
+        printf("Device ID not match ROM FILE in offset 0x%x\n",FW_DEVICE_ID_OFFSET);
+        printf("Check device id is 0x%4.4x\n",video_pci_prop.DeviceId);
+        printf("Check rom device id is 0x%4.4x\n",vbios_device_id);
         exit(GENERAL_FILE_ERROR);
     }
     else
     {
-        printf("DID match :Device ID match ROM FILE in offset 0xF00A\n");
+        printf("Device ID match ROM FILE in offset 0x%x\n",FW_DEVICE_ID_OFFSET);
     }
 	
 }
@@ -277,9 +287,11 @@ void Check_Rom_Device_Id(char* romImageName)
 
 int isMD5check(char* romImageName)
 {
-    char *fw_header_version = (char*)malloc(sizeof(char));
+    unsigned char *fw_header_version = (unsigned char*)malloc(sizeof(unsigned char));
     
-    fw_header_version = read_info_from_file(romImageName,FW_CHECKSUM_OFFSET,FW_CHECKSUM_SIZE);
+    fw_header_version = read_info_from_file(romImageName,FW_HEADER_VERSION_OFFSET,FW_HEADER_VERSION_SIZE);
+    printf("Header version is 0x%x\n", *fw_header_version);
+
     if (*fw_header_version == 0x02)
     {
         printf("Use MD5 Check Valification!\n");

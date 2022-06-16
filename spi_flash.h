@@ -60,6 +60,7 @@ void sf_write_data(unsigned int addr, unsigned int data, unsigned char len);
 void sf_write_status(unsigned short data);
 void sf_sector_erase(unsigned int addr);
 void sf_read_status_test();
+void sf_flash_test(int argc, char *argv[]);
 //void writel(unsigned int data,unsigned long MmioBaseAddr);
 // void sf_32k_erase(unsigned int addr);
 // void sf_64k_erase(unsigned int addr);

@@ -16,8 +16,10 @@
 
 typedef struct
 {
-    int vendorid;
-    int deviceid;
+    unsigned int vendorid;
+    unsigned int deviceid;
+	unsigned long mmiobase;
+	unsigned long fbbase;
 } configuration;
 
 typedef enum
