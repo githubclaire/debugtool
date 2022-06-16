@@ -166,7 +166,7 @@ int do_dbg_program_fw(char * cmd[], unsigned int param_count)
 	}
 	else
 	{
-		printf("> prog filename: program spi flash.\n");
+		printf("  prog filename: program spi flash.\n");
 	}
 	return TRUE;
 }
@@ -191,7 +191,7 @@ int do_dbg_dump_fw(char * cmd[], unsigned int param_count)
 	}
 	else
 	{
-    	printf("> dump filename [filesize(byte)]: dump spi flash file.\n");
+    	printf("  dump filename [filesize(byte)]: dump spi flash file.\n");
 	}
 	return TRUE;
 }
@@ -215,15 +215,16 @@ int do_dbg_quit(char * cmd[], unsigned int param_count)
 
 void helpinfo(void)
 {
-    printf("> help/?     --- print help info\n");
-    printf("> q          --- quit\n");
-	printf("> ts         --- print temperature\n");
-	printf("> vcore      --- print vcore\n");    
-    printf("> clk        --- read/write clock\n");
-    printf("> memtest    --- miu test connection\n");  
-    printf("> prog       --- program or dump rom to/from flash\n");
-    printf("> mmio       --- read/write register\n");  
-    printf("> print      --- print all information(pcie info/mem info/vcore/clk/temp)\n");
+    printf("  help/?     --- print help info\n");
+    printf("  q          --- quit\n");
+	printf("  ts         --- print temperature\n");
+	printf("  vcore      --- print vcore\n");    
+    printf("  clk        --- read/write clock\n");
+    printf("  memtest    --- miu test connection\n");  
+    printf("  prog       --- program rom to flash\n");
+    printf("  dump       --- dump data from flash saved to file\n");	
+    printf("  mmio       --- read/write register\n");  
+    printf("  print      --- print all information(pcie info/mem info/vcore/clk/temp)\n");
 }
 
 

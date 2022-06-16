@@ -336,7 +336,7 @@ void clk_prog(int argc, char *argv[])
 
 void clk_help_info(void)
 {
-    printf("> clock d/e/v: clock d/e/v read.\n");
-    printf("> clock e/v data(MHz)]: clock e/v write.\n");
-    printf("> clock f data(MHz)]: clock e/v write to spi flash.\n");
+    printf("  clk d/e/v: clock d/e/v read.\n");
+    printf("  clk e/v data(MHz)]: clock e/v write.\n");
+    printf("  clk f data(MHz)]: clock e/v write to spi flash.\n");
 }

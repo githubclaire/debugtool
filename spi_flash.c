@@ -311,9 +311,9 @@ void sf_flash_test(int argc, char *argv[])
 
 void sf_help_info(void)
 {
-	printf("> sf -w addr data [len]: write spi flash data.\n");
-	printf("> sf -r addr [len]: read spi flash data.\n");
-	printf("> sf -f sector_num: erase spi flash.\n");
+	printf("  sf -w addr data [len]: write spi flash data.\n");
+	printf("  sf -r addr [len]: read spi flash data.\n");
+	printf("  sf -f sector_num: erase spi flash.\n");
 }
 /*void writel(unsigned int data,unsigned long MmioBaseAddr)
 {
