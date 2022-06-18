@@ -36,9 +36,15 @@ int main(int argc, char *argv[])
     config.vendorid = 0x6766;
     config.deviceid = 0x3d02;
 
+    if(argc == 2)
+    {
+        config_file_name = argv[1];
+    }
+
     if(ini_parse(config_file_name, handler, &config)<0) 
     {
-        printf("Can't load 'glenfly_tool_debug.ini'\n");
+        printf("Can't load %s\n",config_file_name);
+        printf("Load chip id default : vendorid = 0x%x, deviceid = 0x%x\n", config.vendorid, config.deviceid);
     }
     else
     {
@@ -48,6 +54,7 @@ int main(int argc, char *argv[])
     if(!find_Base_Addr(config))
     {
         //load mmio base from config.ini
+        printf("Can't read mmio base address from pcie.\n");
         printf("Load base address from file: mmiobase = 0x%lx\n", config.mmiobase);
         video_pci_prop.MmioBase = config.mmiobase;
     }

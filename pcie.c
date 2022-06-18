@@ -76,6 +76,7 @@ int map_to_system_memory(unsigned long addr)
 
 void read_PCIe(unsigned long mapped_base)
 {
+	unsigned int pcie_width;
     unsigned int pcie_info_addr = 0x8070;
     unsigned int pcie_info = *(unsigned int *)(mapped_base + pcie_info_addr);
 				
@@ -92,7 +93,7 @@ void read_PCIe(unsigned long mapped_base)
             break;
     }
 
-	unsigned int pcie_width = (pcie_info & 0x0ff00000)>>20;
+	pcie_width = (pcie_info & 0x0ff00000)>>20;
 
     printf("PCIe Width : x%d\n", pcie_width);
 }
@@ -122,7 +123,7 @@ void read_bitwidth(unsigned long mapped_base)
     if(i<6)
     {
         t=1.0;
-        for(int j=0;j<i;j++)
+        for(j=0;j<i;j++)
         {
             t = t*2;
         }        
