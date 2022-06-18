@@ -2,6 +2,7 @@
 
 extern VIDEO_PCI_PROP video_pci_prop;
 
+
 DBG_CMD_STRUCT dbg_cmd_table[] = {
 	{"?", do_dbg_help},
 	{"q", do_dbg_quit},
@@ -14,7 +15,9 @@ DBG_CMD_STRUCT dbg_cmd_table[] = {
 	{"dump", do_dbg_dump_fw},	
 	{"print", do_dbg_print_info},
 	{"clk", do_dbg_clk},  
-	{"memtest", do_dbg_mem_test},        
+	{"memtest", do_dbg_mem_test},
+	{"i2c", do_dbg_i2c_test},
+	{"dp", do_dbg_dp_test},		        
 };
 
 #define DBG_CMD_TABLE_SIZE (sizeof(dbg_cmd_table) / sizeof(DBG_CMD_STRUCT))
@@ -22,7 +25,7 @@ DBG_CMD_STRUCT dbg_cmd_table[] = {
 
 void CToolParserCmd(void)
 {
-	char*   line;
+	char*  line;
 
 	line = (char*)malloc(STRINGBUFFERSIZE);
 	memset(line, 0, STRINGBUFFERSIZE);
@@ -30,9 +33,7 @@ void CToolParserCmd(void)
 	while(1)
 	{
 		EchoWait();
-
 		CToolGetInput(line, STRINGBUFFERSIZE* sizeof(char));
-
 		if(ProcessString(line)==0)
 		{	
 			break;
@@ -100,7 +101,7 @@ int do_dbg_mmio(char * cmd[], unsigned int param_count)
 	{
 		reg_index = StoH(cmd[1]);
         reg_data = readl(video_pci_prop.mapped_mmioBase+reg_index);
-		printf ("\nRead MMIO %x = 0x%08x\n", reg_index, reg_data);
+		printf("\nRead MMIO %x = 0x%08x\n", reg_index, reg_data);
 	}
 	else if(param_count == 3)	//register write
 	{
@@ -151,6 +152,18 @@ int do_dbg_flash(char * cmd[], unsigned int param_count)
 }
 
 int do_dbg_mem_test(char * cmd[], unsigned int param_count)
+{
+    chip_mem_connection_test(param_count,cmd);
+	return TRUE;
+}
+
+int do_dbg_i2c_test(char * cmd[], unsigned int param_count)
+{
+	i2c_prog(param_count,cmd);
+	return TRUE;
+}
+
+int do_dbg_dp_test(char * cmd[], unsigned int param_count)
 {
     chip_mem_connection_test(param_count,cmd);
 	return TRUE;

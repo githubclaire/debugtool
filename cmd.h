@@ -31,7 +31,8 @@ int do_dbg_program_fw(char * cmd[], unsigned int param_count);
 int do_dbg_dump_fw(char * cmd[], unsigned int param_count);
 int do_dbg_clk(char * cmd[], unsigned int param_count);
 int do_dbg_mem_test(char * cmd[], unsigned int param_count);
-
+int do_dbg_i2c_test(char * cmd[], unsigned int param_count);
+int do_dbg_dp_test(char * cmd[], unsigned int param_count);
 
 void CToolParserCmd(void);
 int ProcessString(char* buffer);

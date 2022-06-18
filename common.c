@@ -1,5 +1,7 @@
 #include "def.h"
 
+extern VIDEO_PCI_PROP video_pci_prop;
+
 #define is_digit(c)	((c) >= '0' && (c) <= '9')
 
 unsigned int StoH(char * s)
@@ -33,6 +35,16 @@ void mdelay(int cont)
     {
         udelay(1000);
     }
+}
+
+void write8(unsigned int index, unsigned char value)
+{
+	*(unsigned char*)(video_pci_prop.mapped_mmioBase + index) = value;
+}
+
+unsigned char read8(unsigned int index)
+{
+    return *((unsigned char*)(video_pci_prop.mapped_mmioBase+index));
 }
 
 /*

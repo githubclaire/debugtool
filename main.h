@@ -20,6 +20,10 @@ typedef struct
     unsigned int deviceid;
 	unsigned long mmiobase;
 	unsigned long fbbase;
+	unsigned int serialport0;
+	unsigned int serialport1;
+	unsigned int serialport2;
+	unsigned int serialport3;	
 } configuration;
 
 typedef enum

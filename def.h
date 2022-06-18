@@ -25,3 +25,4 @@
 #include "spi_flash.h"
 #include "memtest.h"
 #include "ini.h"
+#include "i2c.h"

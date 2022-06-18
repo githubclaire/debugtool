@@ -2,7 +2,7 @@
 
 
 VIDEO_PCI_PROP video_pci_prop;
-
+configuration config;
 
 static int handler(void* user, const char* section, const char* name, const char* value)
 {
@@ -20,7 +20,19 @@ static int handler(void* user, const char* section, const char* name, const char
     else if(MATCH("addr", "mmiobase"))
     {
         pconfig->mmiobase = htoi(value);
-    }   
+    }  
+     else if(MATCH("i2c", "crt"))
+    {
+        pconfig->serialport0 = htoi(value);
+    } 
+    else if(MATCH("i2c", "hdmi0"))
+    {
+        pconfig->serialport1 = htoi(value);
+    } 
+    else if(MATCH("i2c", "hdmi1"))
+    {
+        pconfig->serialport2 = htoi(value);
+    }     
     else
     {
         return 0;  /* unknown section/name, error */
@@ -30,7 +42,6 @@ static int handler(void* user, const char* section, const char* name, const char
 
 int main(int argc, char *argv[])
 {
-    configuration config;
     char* config_file_name = "glenfly_tool_debug.ini";
 
     config.vendorid = 0x6766;
