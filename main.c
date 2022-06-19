@@ -70,10 +70,15 @@ int main(int argc, char *argv[])
         video_pci_prop.MmioBase = config.mmiobase;
     }
 
+#ifdef __ubuntu__
     if(map_to_system_memory(video_pci_prop.MmioBase))
     {
         CToolParserCmd();
     }
+#elif __dos__
+    video_pci_prop.mapped_mmioBase = video_pci_prop.MmioBase;
+    CToolParserCmd();
+#endif
 
 	return 1;
 }

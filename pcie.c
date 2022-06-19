@@ -4,7 +4,7 @@
 
 extern VIDEO_PCI_PROP video_pci_prop;
 
-
+#ifdef __ubuntu__
 int find_Base_Addr(configuration config)
 {	
 	struct pci_access * myaccess;
@@ -73,6 +73,49 @@ int map_to_system_memory(unsigned long addr)
 
 	return TRUE;
 }
+#elif __dos__
+int find_Base_Addr(configuration config)
+{	
+	char  bus, dev;
+	unsigned long MMIOBaseAddress;
+	unsigned long FBBaseAddress;
+	unsigned short vendorID;
+	unsigned short deviceID;
+	
+	for(bus = 0; bus < 255; bus++)
+	{
+		for(dev = 0; dev < 32; dev++)
+		{
+			vendorID = ReadPciCfgWord(bus, dev, 0, 0x00);
+			
+			if(vendorID != config.vendorid)
+			{
+				continue;
+			}
+
+			deviceID = ReadPciCfgWord(bus, dev, 0, 0x02);
+
+			if(deviceID == config.deviceid)
+			{
+				WritePciCfgDword(bus, dev, 0, 0x4, 0x6);
+				printf("BUS_DEV_FUNC is : %.2x:%.2x.0\n",bus,dev);
+				video_pci_prop.DeviceId = deviceID;
+				video_pci_prop.VenderId = vendorID;
+				
+				MMIOBaseAddress= ReadPciCfgDword(bus, dev, 0, 0x10);
+				video_pci_prop.MmioBase  = MMIOBaseAddress & 0xFFFF0000;
+				printf("PCIE MMIOBase = 0x%x\n",video_pci_prop.MmioBase);
+				
+				FBBaseAddress = ReadPciCfgDword(bus, dev, 0, 0x14);
+				video_pci_prop.FBBase = FBBaseAddress & 0xFFFFFFF0;
+
+				return TRUE;
+			}
+		}
+	}
+	return FALSE;
+}
+#endif
 
 void read_PCIe(unsigned long mapped_base)
 {

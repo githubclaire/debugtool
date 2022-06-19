@@ -194,9 +194,14 @@ int do_dbg_dump_fw(char * cmd[], unsigned int param_count)
 		{
 			dump_file_size = atoi(cmd[2]);
 		}
-		else
+		else if(param_count==2)
 		{
 			//read file size from vbios
+			dump_file_size = sf_read_data(FW_FILE_SIZE_OFFSET,FW_FILE_SIZE_LEN);
+			if(dump_file_size==0)
+			{
+				dump_file_size = MAX_VIDEO_ROM_SIZE;
+			}
 		}
 
 		printf("dump file size =%d\n", dump_file_size);

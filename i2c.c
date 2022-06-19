@@ -354,11 +354,11 @@ void i2c_delay(unsigned int i)
 void i2c_prog(int argc, char *argv[])
 {
     int i;
-	unsigned char    i2cIndex = 0;
-	unsigned int    serialPortNo = config.serialport1;	
-	unsigned char    deviceAddr = EDID_DEVADDR;
-	unsigned char    subAddr = 0;
-	unsigned char    data = 0;
+	unsigned char i2cIndex = 0;
+	unsigned int serialPortNo = config.serialport1;	
+	unsigned char deviceAddr = EDID_DEVADDR;
+	unsigned char subAddr = 0;
+	unsigned char data = 0;
 	
     if(argc >= 3)
     {

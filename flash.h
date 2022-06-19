@@ -20,12 +20,14 @@
 #define FW_VENDOR_ID_OFFSET 0xF008
 #define FW_DEVICE_ID_OFFSET 0xF00A
 #define FW_MD5_VALUE_OFFSET 0xF0B4
+#define FW_FILE_SIZE_OFFSET 0xF0C4
 
 #define FW_HEADER_VERSION_SIZE 1
 #define FW_CHECKSUM_SIZE 1
 #define FW_VENDOR_ID_SIZE 2
 #define FW_DEVICE_ID_SIZE 2
 #define FW_MD5_VALUE_SIZE 16
+#define FW_FILE_SIZE_LEN 4
 
 void flash_vbios(char *romImageName);
 int dump_vbios(char *romImageName, unsigned int dump_file_size);

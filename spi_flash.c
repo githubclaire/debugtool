@@ -15,7 +15,7 @@ volatile unsigned long sectorNo, addrW,addrR, status_index;
 //for linux
 void delay_us(int cont)
 {
-    usleep(cont);
+    udelay(cont);
 }
 
 void sf_exit(unsigned char extcode)

@@ -9,9 +9,17 @@ FILE *OpenFileUser(char *szFname, char *szMode)
 
 unsigned int get_file_Size(char *filename)
 {
+    unsigned int fileSize=0;
+    
+#ifdef __ubuntu__
 	struct stat statbuf;
 	stat(filename,&statbuf);
-	unsigned int fileSize = statbuf.st_size;
+#elif __dos__
+   	struct _stat statbuf;
+	_stat(filename,&statbuf);
+#endif
+
+	fileSize = statbuf.st_size;
 	return fileSize;
 }
 

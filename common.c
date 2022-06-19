@@ -23,6 +23,7 @@ unsigned int StoH(char * s)
 	return hdata;
 }
 
+#ifdef __ubuntu__
 void udelay(int cont)
 {
     usleep(cont);
@@ -36,6 +37,26 @@ void mdelay(int cont)
         udelay(1000);
     }
 }
+#elif __dos__
+void udelay(int x)
+{
+	unsigned int i;
+
+	for (i = 0; i < x; ++i){
+		_asm{
+			mov	dx, 0x0ed 
+			out	dx, al
+		}
+	}
+}
+
+void mdelay(int x)
+{
+	int i;
+	for (i = 0; i < x; i ++)
+			udelay(1000);
+}
+#endif
 
 void write8(unsigned int index, unsigned char value)
 {
@@ -115,3 +136,75 @@ unsigned long htoi(const char *s)
 
     return n;  
 }  
+
+#ifdef __dos__
+unsigned short ReadPciCfgWord(unsigned char bus, unsigned char dev, unsigned char func, unsigned char reg)
+{
+	unsigned short v;
+	unsigned int flag = 0;
+
+	_asm pushfd;
+	_asm pop flag;
+	_asm cli;
+	outpd(0xCF8, (0x80000000|(bus<<16)|(dev<<11)|(func<<8)|(reg&0xFC)));
+	v = inpw(0xCFC+(reg&3));
+	_asm push flag;
+	_asm popfd;
+
+	return v;
+}
+
+unsigned int ReadPciCfgDword(unsigned char bus, unsigned char dev, unsigned char func, unsigned char reg)
+{
+	unsigned int v, flag = 0;
+
+	_asm pushfd;
+	_asm pop flag;
+	_asm cli;
+	outpd(0xCF8, (0x80000000|(bus<<16)|(dev<<11)|(func<<8)|(reg&0xFC)));
+	v = inpd(0xCFC);
+	_asm push flag;
+	_asm popfd;
+
+	return v;
+}
+
+void WritePciCfgByte(unsigned char bus, unsigned char dev, unsigned char func, unsigned char reg, unsigned char v)
+{
+	unsigned int flag = 0;
+
+	_asm pushfd;
+	_asm pop flag;
+	_asm cli;
+	outpd(0xCF8, (0x80000000|(bus<<16)|(dev<<11)|(func<<8)|(reg&0xFC)));
+	outp(0xCFC+(reg&3), v);
+	_asm push flag;
+	_asm popfd;
+}
+
+void WritePciCfgWord(unsigned char bus, unsigned char dev, unsigned char func, unsigned char reg, unsigned short v)
+{
+	unsigned int flag = 0;
+
+	_asm pushfd;
+	_asm pop flag;
+	_asm cli;
+	outpd(0xCF8, (0x80000000|(bus<<16)|(dev<<11)|(func<<8)|(reg&0xFC)));
+	outpw(0xCFC+(reg&3), v);
+	_asm push flag;
+	_asm popfd;
+}
+
+void WritePciCfgDword(unsigned char bus, unsigned char dev, unsigned char func, unsigned char reg, unsigned int v)
+{
+	unsigned int flag = 0;
+
+	_asm pushfd;
+	_asm pop flag;
+	_asm cli;
+	outpd(0xCF8, (0x80000000|(bus<<16)|(dev<<11)|(func<<8)|(reg&0xFC)));
+	outpd(0xCFC, v);
+	_asm push flag;
+	_asm popfd;
+}
+#endif
