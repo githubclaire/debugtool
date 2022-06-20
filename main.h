@@ -23,7 +23,7 @@ typedef struct
 	unsigned int serialport0;
 	unsigned int serialport1;
 	unsigned int serialport2;
-	unsigned int serialport3;	
+	unsigned int i2cdelay;	
 } configuration;
 
 typedef enum

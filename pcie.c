@@ -26,8 +26,8 @@ int find_Base_Addr(configuration config)
             classCode = pci_read_long(mydev,0x08);
 			if((classCode & 0xFF000000) == 0x03000000)
 			{
-				pci_write_byte(mydev, 0x04,0x06);
-				PCIcmd = pci_read_long(mydev, 0x04);	
+				pci_write_byte(mydev,0x04,0x06);
+				PCIcmd = pci_read_long(mydev,0x04);	
 				//printf("PCIcmd:0x%04x\n",PCIcmd);
 				if(PCIcmd&0x02)
 				{
@@ -50,6 +50,7 @@ int find_Base_Addr(configuration config)
 			}															
 		}
 	}
+
 	return FALSE;
 }
 
@@ -73,7 +74,9 @@ int map_to_system_memory(unsigned long addr)
 
 	return TRUE;
 }
-#elif __dos__
+#endif
+
+#ifdef __dos__
 int find_Base_Addr(configuration config)
 {	
 	char  bus, dev;
@@ -81,23 +84,26 @@ int find_Base_Addr(configuration config)
 	unsigned long FBBaseAddress;
 	unsigned short vendorID;
 	unsigned short deviceID;
+	unsigned short memory_enable_bit;
 	
-	for(bus = 0; bus < 255; bus++)
+	for(bus=0; bus<255; bus++)
 	{
-		for(dev = 0; dev < 32; dev++)
+		for(dev=0; dev<32; dev++)
 		{
-			vendorID = ReadPciCfgWord(bus, dev, 0, 0x00);
-			
+			vendorID = ReadPciCfgWord(bus, dev, 0, 0x00);			
 			if(vendorID != config.vendorid)
 			{
 				continue;
 			}
 
 			deviceID = ReadPciCfgWord(bus, dev, 0, 0x02);
-
 			if(deviceID == config.deviceid)
 			{
-				WritePciCfgDword(bus, dev, 0, 0x4, 0x6);
+				memory_enable_bit = ReadPciCfgWord(bus, dev, 0, 0x4) & 0x2;
+				if(memory_enable_bit!=0x02)
+				{
+					WritePciCfgDword(bus, dev, 0, 0x4, 0x6);
+				}
 				printf("BUS_DEV_FUNC is : %.2x:%.2x.0\n",bus,dev);
 				video_pci_prop.DeviceId = deviceID;
 				video_pci_prop.VenderId = vendorID;

@@ -24,7 +24,7 @@
 #define SERIAL_HDMI1	0x89F8 
 
 #define EDID_DEVADDR    0xA0
-#define EDID_BUFFER_SIZE 256
+#define EDID_BUFFER_SIZE 128*2
 
 #define DELAYTIME  2
 //#define DELAYTIME  100

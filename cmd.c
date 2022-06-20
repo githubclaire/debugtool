@@ -201,10 +201,15 @@ int do_dbg_dump_fw(char * cmd[], unsigned int param_count)
 			if(dump_file_size==0)
 			{
 				dump_file_size = MAX_VIDEO_ROM_SIZE;
+				printf("Use default file size! ");
+			}
+			else
+			{
+				printf("Read file size from spi flash! ");
 			}
 		}
 
-		printf("dump file size =%d\n", dump_file_size);
+		printf("Dump file size =%d\n", dump_file_size);
 		dump_vbios(cmd[1],dump_file_size);
 	}
 	else
@@ -242,6 +247,7 @@ void helpinfo(void)
     printf("  prog       --- program rom to flash\n");
     printf("  dump       --- dump data from flash saved to file\n");	
     printf("  mmio       --- read/write register\n");  
+    printf("  i2c        --- i2c read/write data\n"); 	
     printf("  print      --- print all information(pcie info/mem info/vcore/clk/temp)\n");
 }
 

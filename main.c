@@ -32,7 +32,11 @@ static int handler(void* user, const char* section, const char* name, const char
     else if(MATCH("i2c", "hdmi1"))
     {
         pconfig->serialport2 = htoi(value);
-    }     
+    }
+    else if(MATCH("i2c", "i2cdelay"))
+    {
+        pconfig->i2cdelay = atoi(value);
+    }        
     else
     {
         return 0;  /* unknown section/name, error */
@@ -42,7 +46,7 @@ static int handler(void* user, const char* section, const char* name, const char
 
 int main(int argc, char *argv[])
 {
-    char* config_file_name = "glenfly_tool_debug.ini";
+    char* config_file_name = "glendbg.ini";
 
     config.vendorid = 0x6766;
     config.deviceid = 0x3d02;
@@ -70,12 +74,15 @@ int main(int argc, char *argv[])
         video_pci_prop.MmioBase = config.mmiobase;
     }
 
+
 #ifdef __ubuntu__
     if(map_to_system_memory(video_pci_prop.MmioBase))
     {
         CToolParserCmd();
     }
-#elif __dos__
+#endif
+
+#ifdef __dos__
     video_pci_prop.mapped_mmioBase = video_pci_prop.MmioBase;
     CToolParserCmd();
 #endif

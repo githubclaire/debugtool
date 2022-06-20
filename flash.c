@@ -14,12 +14,14 @@ unsigned int get_file_Size(char *filename)
 #ifdef __ubuntu__
 	struct stat statbuf;
 	stat(filename,&statbuf);
-#elif __dos__
+#endif
+
+#ifdef __dos__
    	struct _stat statbuf;
 	_stat(filename,&statbuf);
 #endif
-
-	fileSize = statbuf.st_size;
+    fileSize = statbuf.st_size;
+	
 	return fileSize;
 }
 

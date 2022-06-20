@@ -3,7 +3,9 @@
 
 #ifdef __linux__
 #define __ubuntu__
-#elif __MSDOS__
+#endif
+
+#ifdef __DOS__
 #define __dos__
 #endif 
 
@@ -13,7 +15,9 @@
 #include <sys/stat.h>
 #include "pci/pci.h"
 #include "pciaccess.h"
-#elif __dos__
+#endif
+
+#ifdef __dos__
 #include <i86.h>
 #include <dos.h>
 #include <bios.h>

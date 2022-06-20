@@ -13,7 +13,8 @@ unsigned char SCL_SHIFT = 0;
 unsigned char SDA_R = 0;
 
 unsigned char slave_addr;
-unsigned char serial;
+unsigned int serial;
+unsigned int i2c_delay_time;
 
 void SerialPort_Init(unsigned int serialno, unsigned char slaveaddr)
 {
@@ -34,7 +35,7 @@ void SerialPort_RegWrite(unsigned int value)
 {
 	if((serial == SERIAL_CRT) || (serial == SERIAL_HDMI0) || (serial == SERIAL_HDMI1))
     {
-        write8(value,serial);
+        write8(serial,value);
     }
 	else 
 	{
@@ -344,11 +345,14 @@ int i2c_write_data_page(unsigned char addr, unsigned int len, unsigned char *dat
 //Delays
 void i2c_delay(unsigned int i)
 {
-    int j=0;
+
+	int j=0;
+    i=i*i2c_delay_time;
     for(j=0;j<i;j++)
     {
-        mdelay(10);
+        //mdelay(i2c_delay_time);
     }
+
 }
 
 void i2c_prog(int argc, char *argv[])
@@ -358,7 +362,9 @@ void i2c_prog(int argc, char *argv[])
 	unsigned int serialPortNo = config.serialport1;	
 	unsigned char deviceAddr = EDID_DEVADDR;
 	unsigned char subAddr = 0;
-	unsigned char data = 0;
+	unsigned char data;
+	unsigned char edid[256];
+	i2c_delay_time = config.i2cdelay;
 	
     if(argc >= 3)
     {
@@ -367,39 +373,45 @@ void i2c_prog(int argc, char *argv[])
         {
             case 0: serialPortNo = config.serialport0;break;
             case 1: serialPortNo = config.serialport1;break;
-            case 2: serialPortNo = config.serialport2;break;
-            case 3: serialPortNo = config.serialport3;break;			
+            case 2: serialPortNo = config.serialport2;break;			
             default: i2c_help_info();break;
         }
 
         deviceAddr = StoH(argv[2]);
         SerialPort_Init(serialPortNo, deviceAddr);			
         printf("\nserialPortNo is 0x%4.4x, device address is 0x%2.2x.\n", serialPortNo, deviceAddr);
+		memset(edid,0,EDID_BUFFER_SIZE);
         
         if(argc == 3)
-        {								
-            printf("\n");
-            printf("    ");
-            for (i = 0; i < 16; i ++)
-            {
-                printf ("%02x  ", i);
-            }
-            printf("\n");
+        {
+			if (i2c_read_data_page(0x00, EDID_BUFFER_SIZE, edid) == FALSE)
+			{
+				i2c_stop();
+				printf("\nERROR: I2C Read error! Can not find the Device!\n");				
+			}
+			else
+			{
+				printf("\n");
+				printf("    ");
+				for (i = 0; i < 16; i ++)
+				{
+					printf ("%02x  ", i);
+				}
+				printf("\n");
 
-            for (i = 0x00; i <= 0xff; i++)	//read back
-            {
-                if ((i % 16) == 0)
-                {
-                    printf("\n");
-                    printf ("%02x  ", i);
-                }
+				for (i = 0x00; i < EDID_BUFFER_SIZE; i++)	//read back
+				{
+					if ((i % 16) == 0)
+					{
+						printf("\n");
+						printf ("%02x  ", i);
+					}
 
-                if(i2c_read_data(i,&data))
-                    printf("%02x  ", data);
-                else
-                    break;			
-            }
-            printf("\n");
+					printf("%02x  ", edid[i]);
+				
+				}
+				printf("\n");
+			}								
         }
         else if(argc == 4)
         {

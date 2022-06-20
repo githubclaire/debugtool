@@ -37,7 +37,9 @@ void mdelay(int cont)
         udelay(1000);
     }
 }
-#elif __dos__
+#endif
+
+#ifdef __dos__
 void udelay(int x)
 {
 	unsigned int i;
