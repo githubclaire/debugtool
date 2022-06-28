@@ -37,5 +37,5 @@ int do_dbg_dp_test(char * cmd[], unsigned int param_count);
 void CToolParserCmd(void);
 int ProcessString(char* buffer);
 void helpinfo(void);
-//void TestCmdLine(void);
+unsigned char GetKey(void);
 #endif

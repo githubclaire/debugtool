@@ -252,97 +252,17 @@ void helpinfo(void)
 }
 
 
-/*
+
 unsigned char GetKey(void)
 {
 	unsigned char key;    
-
+#ifdef __ubuntu__
 	key = getchar();
-	
-	if (key == 0)
-		key = (0x80 | getchar());
-
+#endif
+#ifdef __dos__
+	key = getch();
+#endif
+	//if (key == 0)
+	//	key = (0x80 | getchar());
 	return key;
 }
-
-void TestCmdLine(void)
-{
-	char    c = 0;
-	char*   buffer;
-	char*   oldbuf;
-	char*   ptr;
-	int  oldbuf_valid = FALSE;
-	int  n;
-
-	buffer = (char*)malloc(sizeof(char) * STRINGBUFFERSIZE);
-	oldbuf = (char*)malloc(sizeof(char) * STRINGBUFFERSIZE);
-
-	while (1) 
-	{
-		printf("\n>");
-		fflush (stdout);
-		ptr = buffer; // reset the buffer pointer
-		n=0;
-
-		// Get the command string
-		while (1) 
-		{
-			c = GetKey();
-	
-			if ((c == 0x8) && (n==0))	// ignore the first BackSpace
-				continue;
-			else if (c == 0x8)	// not the first BackSpace
-			{
-				ptr--;
-				n--;
-				putchar(0x8);
-				putchar(' ');
-				putchar(0x8);
-			}
-			else if ((c== 0xd) || (c==0xa))	//  
-			{
-				*ptr = '\0';	// add a '\0' to the end of the string
-				//save the current buffer to old buffer
-				strcpy(oldbuf, buffer);
-				oldbuf_valid=TRUE;
-				break;
-			}
-			else if ((c < 0x20) || (c > 0x7f)) 	// not a character
-			{
-				if ((c==F3KEY)&&oldbuf_valid)	// "F3", find the previous command
-				{
-					while (n--) 
-					{
-						putchar(0x8);
-						putchar(' ');
-						putchar(0x8);
-					}
-					n=printf("%s",oldbuf);
-					fflush (stdout);
-					//copy from old buffer to current buffer
-					strcpy(buffer,oldbuf);
-					ptr = (unsigned char *) &buffer[n];
-				}
-				continue;
-			}
-			else 
-			{
-				if (ptr <= &buffer[198]) 
-				{
-					*ptr++ = c;
-					putchar(c);
-					n++;
-				}
-			}
-		}
-		if(ProcessString(buffer)==0)
-		{	
-			break;
-		}
-
-	}
-
-	free(oldbuf);
-	
-}
-*/

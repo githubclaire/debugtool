@@ -21,7 +21,7 @@ int find_Base_Addr(configuration config)
     {		
 		pci_fill_info(mydev, PCI_FILL_IDENT | PCI_FILL_BASES | PCI_FILL_CLASS);
 
-		if(mydev->vendor_id == config.vendorid && mydev->device_id == config.deviceid)
+		if(mydev->vendor_id == config.id.vendorid && mydev->device_id == config.id.deviceid)
 		{
             classCode = pci_read_long(mydev,0x08);
 			if((classCode & 0xFF000000) == 0x03000000)
@@ -91,13 +91,13 @@ int find_Base_Addr(configuration config)
 		for(dev=0; dev<32; dev++)
 		{
 			vendorID = ReadPciCfgWord(bus, dev, 0, 0x00);			
-			if(vendorID != config.vendorid)
+			if(vendorID != config.id.vendorid)
 			{
 				continue;
 			}
 
 			deviceID = ReadPciCfgWord(bus, dev, 0, 0x02);
-			if(deviceID == config.deviceid)
+			if(deviceID == config.id.deviceid)
 			{
 				memory_enable_bit = ReadPciCfgWord(bus, dev, 0, 0x4) & 0x2;
 				if(memory_enable_bit!=0x02)

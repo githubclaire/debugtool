@@ -29,6 +29,7 @@ void SerialPort_Init(unsigned int serialno, unsigned char slaveaddr)
 	SDA_SHIFT = 3;
 	SCL_BIT = SCL_READ;					//8'b0000 0100;
 	SCL_SHIFT = 2;
+	i2c_delay_time = config.i2c.i2c_delay;
 }
 
 void SerialPort_RegWrite(unsigned int value)
@@ -359,21 +360,21 @@ void i2c_prog(int argc, char *argv[])
 {
     int i;
 	unsigned char i2cIndex = 0;
-	unsigned int serialPortNo = config.serialport1;	
+	unsigned int serialPortNo = 0x88a0;	
 	unsigned char deviceAddr = EDID_DEVADDR;
 	unsigned char subAddr = 0;
 	unsigned char data;
 	unsigned char edid[256];
-	i2c_delay_time = config.i2cdelay;
+	i2c_delay_time = config.i2c.i2c_delay;
 	
     if(argc >= 3)
     {
         i2cIndex = StoH(argv[1]);
         switch(i2cIndex)
         {
-            case 0: serialPortNo = config.serialport0;break;
-            case 1: serialPortNo = config.serialport1;break;
-            case 2: serialPortNo = config.serialport2;break;			
+            case 0: serialPortNo = config.i2c.serialport0;break;
+            case 1: serialPortNo = config.i2c.serialport1;break;
+            case 2: serialPortNo = config.i2c.serialport2;break;			
             default: i2c_help_info();break;
         }
 
