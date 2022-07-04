@@ -292,7 +292,7 @@ void clk_prog(int argc, char *argv[])
         else if (strcmp(argv[1], "m") == 0)
 		{	
             printf("Memory Clk : %d MHz\n",get_mpll());
-            read_bitwidth(video_pci_prop.mapped_mmioBase);            
+            read_bitwidth();            
             printf("DDR Version : DDR4\n");
 		}	
 		else
@@ -315,7 +315,7 @@ void clk_prog(int argc, char *argv[])
 		}
         else if (strcmp(argv[1], "f") == 0)
 		{
-            sf_init(video_pci_prop.mapped_mmioBase);
+            sf_init();
             set_epll(clk*2);
             printf("EClk = %d MHz\n",get_vepll(EPLL_REG));
             set_vpll(clk*2);

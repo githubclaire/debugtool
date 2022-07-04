@@ -51,7 +51,7 @@ typedef union
 	}reg;	
 }Reg_SF_Data;
 
-void sf_init(unsigned long MmioBaseAddr);
+void sf_init(void);
 unsigned int sf_read_data(unsigned int addr,unsigned char len);
 unsigned short sf_read_status(void);
 unsigned short sf_read_chip_id(void);

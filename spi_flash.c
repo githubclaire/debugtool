@@ -2,7 +2,7 @@
 #include "def.h"
 #include <stdio.h>
 
-
+extern VIDEO_PCI_PROP video_pci_prop;
 static unsigned long SF_BASE_ADDR;
 
 #define SFPRT printf
@@ -25,11 +25,11 @@ void sf_exit(unsigned char extcode)
 }
  
 // get sf base address
-void sf_init(unsigned long MmioBaseAddr)
+void sf_init(void)
 {
-	SF_BASE_ADDR = MmioBaseAddr;
+	SF_BASE_ADDR = video_pci_prop.mapped_mmioBase;
 	//enable GPIO_ST(Pad input) for sclk pad
-	writel(0x80,MmioBaseAddr+0xa0024);
+	writel(0x80,SF_BASE_ADDR+0xa0024);
 }
 
 unsigned int sf_read_data(unsigned int addr, unsigned char len)

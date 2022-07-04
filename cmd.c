@@ -132,11 +132,11 @@ int do_dbg_voltage(char * cmd[], unsigned int param_count)
 
 int do_dbg_print_info(char * cmd[], unsigned int param_count)
 {
-    sf_init(video_pci_prop.mapped_mmioBase);
+    sf_init();
     read_fw_version();
-    read_PCIe(video_pci_prop.mapped_mmioBase);
+    read_PCIe();
     printf("DDR Version : DDR4\n");
-    read_bitwidth(video_pci_prop.mapped_mmioBase);                        
+    read_bitwidth();                        
     printf("Memory Clk : %d MHz\n",get_mpll());
     printf("Elite Clk : %d MHz\n",get_vepll(EPLL_REG));   
     printf("Temp : %d C\n",dout_to_temp(GetTemperature())/1000);
@@ -146,7 +146,7 @@ int do_dbg_print_info(char * cmd[], unsigned int param_count)
 
 int do_dbg_flash(char * cmd[], unsigned int param_count)
 {
-	sf_init(video_pci_prop.mapped_mmioBase);
+	sf_init();
     sf_flash_test(param_count,cmd);
 	return TRUE;
 }
@@ -172,7 +172,7 @@ int do_dbg_dp_test(char * cmd[], unsigned int param_count)
 int do_dbg_program_fw(char * cmd[], unsigned int param_count)
 {
 	unsigned int dump_file_size = MAX_VIDEO_ROM_SIZE;
-    sf_init(video_pci_prop.mapped_mmioBase);
+    sf_init();
 	if(param_count>=2)
     {
 		flash_vbios(cmd[1]);
@@ -187,7 +187,7 @@ int do_dbg_program_fw(char * cmd[], unsigned int param_count)
 int do_dbg_dump_fw(char * cmd[], unsigned int param_count)
 {
 	unsigned int dump_file_size = MAX_VIDEO_ROM_SIZE;
-    sf_init(video_pci_prop.mapped_mmioBase);
+    sf_init();
 	if(param_count>=2)
     {
 		if(param_count==3)
@@ -209,7 +209,7 @@ int do_dbg_dump_fw(char * cmd[], unsigned int param_count)
 			}
 		}
 
-		printf("Dump file size =%d\n", dump_file_size);
+		printf("Dump file size = %d\n", dump_file_size);
 		dump_vbios(cmd[1],dump_file_size);
 	}
 	else

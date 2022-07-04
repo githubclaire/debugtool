@@ -46,6 +46,8 @@ static int handler(void* user, const char* section, const char* name, const char
 
 int main(int argc, char *argv[])
 {
+    int id_index = 16;
+    int no_config_file = TRUE;
     char* config_file_name = "glendbg.ini";
 
     config.id.vendorid = 0x6766;
@@ -59,21 +61,33 @@ int main(int argc, char *argv[])
     if(ini_parse(config_file_name, handler, &config)<0) 
     {
         printf("Can't load %s\n",config_file_name);
-        printf("Load chip id default : vendorid = 0x%x, deviceid = 0x%x\n", config.id.vendorid, config.id.deviceid);
+        //printf("Load chip id default : vendorid = 0x%x, deviceid = 0x%x\n", config.id.vendorid, config.id.deviceid);
     }
     else
     {
+        no_config_file = FALSE;
         printf("Load chip id from file : vendorid = 0x%x, id.deviceid = 0x%x\n", config.id.vendorid, config.id.deviceid);
     }
 
-    if(!find_Base_Addr(config))
-    {
-        //load mmio base from config.ini
-        printf("Can't read mmio base address from pcie.\n");
-        printf("Load base address from file: mmiobase = 0x%lx\n", config.addr.mmiobase);
-        video_pci_prop.MmioBase = config.addr.mmiobase;
-    }
+    //loop find device id 3d00-3d0e
+    do
+    {      
+        if(find_Base_Addr(config))
+        {
+            printf("Load chip id : vendorid = 0x%x, deviceid = 0x%x\n", config.id.vendorid, config.id.deviceid);
+            break;
+        }
+        if(id_index==1)
+        {
+            //load mmio base from config.ini
+            printf("Can't read mmio base address from pcie.\n");
+            printf("Load base address from file: mmiobase = 0x%lx\n", config.addr.mmiobase);
+            video_pci_prop.MmioBase = config.addr.mmiobase;
+        }
+        config.id.deviceid++;
+    }while (id_index-- && no_config_file);
 
+    
 #ifdef __ubuntu__
     if(!map_to_system_memory(video_pci_prop.MmioBase))
     {

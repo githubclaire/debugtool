@@ -64,7 +64,7 @@ int map_to_system_memory(unsigned long addr)
 	}
 	
 	video_pci_prop.mapped_mmioBase = (unsigned long)mmap(0,PAGE_SIZE,PROT_READ|PROT_WRITE,MAP_SHARED,fb,addr);				
-	//printf("PCIE mapped MMIOBase = 0x%lx\n",video_pci_prop.mapped_mmioBase);
+	printf("PCIE mapped MMIOBase = 0x%lx\n",video_pci_prop.mapped_mmioBase);
 	
 	if(video_pci_prop.mapped_mmioBase == 0)
 	{
@@ -123,11 +123,11 @@ int find_Base_Addr(configuration config)
 }
 #endif
 
-void read_PCIe(unsigned long mapped_base)
+void read_PCIe(void)
 {
 	unsigned int pcie_width;
     unsigned int pcie_info_addr = 0x8070;
-    unsigned int pcie_info = *(unsigned int *)(mapped_base + pcie_info_addr);
+    unsigned int pcie_info = *(unsigned int *)(video_pci_prop.mapped_mmioBase + pcie_info_addr);
 				
     printf("PCIe Speed : ");
     switch ((pcie_info & 0x000f0000)>>16)
@@ -160,11 +160,11 @@ void read_fw_version(void)
 	printf("%2.2x \n",(data&0xff000000)>>24);
 }
 
-void read_bitwidth(unsigned long mapped_base)
+void read_bitwidth(void)
 {
-    unsigned int i,j,data,MIU_ch[2];
+    unsigned int i,j,k,data,MIU_ch[2];
     float t;
-	data = readl(mapped_base+0xd000);
+	data = readl(video_pci_prop.mapped_mmioBase+0xd000);
     i = data&0x07;
     MIU_ch[0] = (data&0x20)>>5;
     MIU_ch[1] = (data&0x800000)>>23;
@@ -172,7 +172,7 @@ void read_bitwidth(unsigned long mapped_base)
     if(i<6)
     {
         t=1.0;
-        for(j=0;j<i;j++)
+        for(k=0;k<i;k++)
         {
             t = t*2;
         }        
