@@ -44,14 +44,26 @@ static int handler(void* user, const char* section, const char* name, const char
     return 1;
 }
 
+void init_config_parameters(configuration* pconfig)
+{
+    pconfig->i2c.serialport0 = 0x89f8;
+    pconfig->i2c.serialport1 = 0x88a0;
+    pconfig->i2c.serialport2 = 0x88aa;
+    pconfig->id.vendorid = 0x6766;
+    pconfig->id.deviceid = 0x3d00;
+    pconfig->i2c.i2c_delay = 400;
+    pconfig->addr.mmiobase = 0xabcdef;
+}
+
 int main(int argc, char *argv[])
 {
     int id_index = 16;
     int no_config_file = TRUE;
     char* config_file_name = "glendbg.ini";
-
-    config.id.vendorid = 0x6766;
-    config.id.deviceid = 0x3d00;
+    
+    init_config_parameters(&config);
+    //config.id.vendorid = 0x6766;
+    //config.id.deviceid = 0x3d00;
 
     if(argc == 2)
     {
