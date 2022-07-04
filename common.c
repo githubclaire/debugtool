@@ -20,7 +20,23 @@ unsigned int StoH(unsigned char * s)
 	}
 	return hdata;
 }
+//for dos delay
+void udelay(int t)
+{
+    volatile unsigned int i,j;
+    for(i=0;i<t;i++)
+    {
+        for(j=0;j<367;j++);
+    }
+}
 
+void mdelay(int x)
+{
+	int i;
+	for (i = 0; i < x; i ++)
+			udelay(1000);
+}
+/*
 void udelay(int cont)
 {
     usleep(cont);
@@ -34,7 +50,7 @@ void mdelay(int cont)
         udelay(1000);
     }
 }
-
+*/
 
 int atoi(const char *s)
 {

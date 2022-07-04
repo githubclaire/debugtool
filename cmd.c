@@ -12,7 +12,8 @@ DBG_CMD_STRUCT dbg_cmd_table[] = {
 	{"prog", do_dbg_program_fw},
 	{"print", do_dbg_print_info},
 	{"clk", do_dbg_clk},  
-	{"memtest", do_dbg_mem_test},        
+	{"memtest", do_dbg_mem_test}, 
+	{"efuse", do_dbg_efuse_test},        
 };
 
 #define DBG_CMD_TABLE_SIZE (sizeof(dbg_cmd_table) / sizeof(DBG_CMD_STRUCT))
