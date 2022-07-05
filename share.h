@@ -3,13 +3,13 @@
 
 #define KEY_ESC                     (0x1B)
 #define KEY_BACKSPACE               (0x08)
-
-#ifdef __ubuntu__
+#define KEY_ENTER                   (0x0A)
+/*#ifdef __ubuntu__
 #define KEY_ENTER                   (0x0A)
 #endif
 #ifdef __dos__
 #define KEY_ENTER                   (0x0D)
-#endif
+#endif*/
 
 #define KEY_BOTTOMLINE              (95)
 #define KEY_SPACE                   (32)

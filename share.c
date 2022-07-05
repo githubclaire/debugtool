@@ -96,7 +96,7 @@ void CToolGetInput(char* buffer, unsigned int size)
 
     j = i = 0;
     do{
-        ch = GetKey();
+        ch = getchar();
 
         if((ch != KEY_ENTER) && (ch != KEY_BACKSPACE))
         {
