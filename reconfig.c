@@ -10,23 +10,20 @@
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
+#include "common.h"
 #include "def.h"
 
+extern VIDEO_PCI_PROP video_pci_prop;
 
 
+//unsigned char ReadPciCfgByte(unsigned char bus, unsigned char dev, unsigned char func, unsigned char reg);
+//unsigned short ReadPciCfgWord(unsigned char bus, unsigned char dev, unsigned char func, unsigned char reg);
+//unsigned int ReadPciCfgDword(unsigned char bus, unsigned char dev, unsigned char func, unsigned char reg);
+//void WritePciCfgByte(unsigned char bus, unsigned char dev, unsigned char func, unsigned char reg, unsigned char v);
+//void WritePciCfgWord(unsigned char bus, unsigned char dev, unsigned char func, unsigned char reg, unsigned short v);
+//void WritePciCfgDword(unsigned char bus, unsigned char dev, unsigned char func, unsigned char reg, unsigned int v);
+//unsigned int GetMMIOBase();
 
-unsigned char ReadPciCfgByte(unsigned char bus, unsigned char dev, unsigned char func, unsigned char reg);
-unsigned short ReadPciCfgWord(unsigned char bus, unsigned char dev, unsigned char func, unsigned char reg);
-unsigned int ReadPciCfgDword(unsigned char bus, unsigned char dev, unsigned char func, unsigned char reg);
-void WritePciCfgByte(unsigned char bus, unsigned char dev, unsigned char func, unsigned char reg, unsigned char v);
-void WritePciCfgWord(unsigned char bus, unsigned char dev, unsigned char func, unsigned char reg, unsigned short v);
-void WritePciCfgDword(unsigned char bus, unsigned char dev, unsigned char func, unsigned char reg, unsigned int v);
-unsigned int GetMMIOBase();
-int ReadMMIO(unsigned int addr,int size);
-void WriteMMIO(unsigned int addr,unsigned int value,int size);
-unsigned int StoH(unsigned char * s);
-void Delay1us(unsigned long x);
-void WriteMMIOMask(unsigned int address,unsigned int value, unsigned int mask);
 
 typedef enum
 { 
@@ -99,7 +96,7 @@ unsigned int GetMMIOBase()
   MMIOBaseAddress &= 0xFFFFFF00;
   return MMIOBaseAddress;
 }
-
+/*
 unsigned int StoH(unsigned char * s)
 {
   unsigned int hdata;
@@ -118,59 +115,8 @@ unsigned int StoH(unsigned char * s)
   }
   return hdata;
 }
+*/
 
-int ReadMMIO(unsigned int addr,int size)
-{
-  int value = -1;
-
-  switch(size)
-  {
-    case 0:
-      value = *(unsigned char*)(g_mmiobase + addr);
-      break;
-      
-    case 1:
-      value = *(unsigned short*)(g_mmiobase+addr);
-      break;
-      
-    case 2:
-      value = *(unsigned int*)(g_mmiobase+addr);
-  }
-
-  return value;
-
-}
-
-void WriteMMIO(unsigned int addr,unsigned int value,int size)
-{
-
-  switch(size)
-  {
-    case S3X_BYTE:
-      *(unsigned char*)(g_mmiobase + addr) = (unsigned char)(value&0xFF);
-      break;
-      
-    case S3X_WORD:
-      *(unsigned short*)(g_mmiobase+addr) = (unsigned short)(value&0xFFFF);
-      break;
-      
-    case S3X_DWORD:
-      *(unsigned int*)(g_mmiobase+addr) = value;
-  }
-}
-
-void WriteMMIOMask(unsigned int address,unsigned int value, unsigned int mask){
-          unsigned int temp;
-                  unsigned int reg_temp;
-          reg_temp = ReadMMIO(address,S3X_DWORD);
-                 // printf("reg_temp 0x%8.8x ;",reg_temp);
-                                  //printf("value is 0x%8.8x;",value);
-                                 // printf("mask is 0x%8.8x;",mask);
-          temp = ((reg_temp& (~mask)) | (value & mask));
-                 // printf("temp_MMIO is 0x%8.8x;",temp);
-          WriteMMIO(address, temp, S3X_DWORD);
-                 
-}
 
 void HdcpEfuseReadAll()
 {
@@ -679,8 +625,9 @@ int efuse_test(int argc, char *argv[])
         unsigned int byteaddr;
         unsigned int bitaddr;
 
-        g_mmiobase = GetMMIOBase();
+        //g_mmiobase = GetMMIOBase();
         //printf("MMIO Base Addr = %8.8x\n\n", g_mmiobase);
+        g_mmiobase= video_pci_prop.MmioBase;
 
         if(argc == 2)
         {
