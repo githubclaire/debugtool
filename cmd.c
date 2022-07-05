@@ -2,24 +2,32 @@
 
 extern VIDEO_PCI_PROP video_pci_prop;
 
+
 DBG_CMD_STRUCT dbg_cmd_table[] = {
 	{"?", do_dbg_help},
+	{"q", do_dbg_quit},
 	{"help", do_dbg_help},
 	{"mmio", do_dbg_mmio},
 	{"ts", do_dbg_ts},
     {"vcore", do_dbg_voltage},
 	{"sf", do_dbg_flash},
 	{"prog", do_dbg_program_fw},
+	{"dump", do_dbg_dump_fw},	
 	{"print", do_dbg_print_info},
 	{"clk", do_dbg_clk},  
-	{"memtest", do_dbg_mem_test}, 
-	{"efuse", do_dbg_efuse_test},        
+	{"memtest", do_dbg_mem_test},
+	{"i2c", do_dbg_i2c_test},
+	{"dp", do_dbg_dp_test},	
+	{"efuse", do_dbg_efuse_test},
+
 };
 
 #define DBG_CMD_TABLE_SIZE (sizeof(dbg_cmd_table) / sizeof(DBG_CMD_STRUCT))
+
+
 void CToolParserCmd(void)
 {
-	unsigned char*   line;
+	char*  line;
 
 	line = (char*)malloc(STRINGBUFFERSIZE);
 	memset(line, 0, STRINGBUFFERSIZE);
@@ -27,9 +35,7 @@ void CToolParserCmd(void)
 	while(1)
 	{
 		EchoWait();
-
 		CToolGetInput(line, STRINGBUFFERSIZE* sizeof(char));
-
 		if(ProcessString(line)==0)
 		{	
 			break;
@@ -38,7 +44,7 @@ void CToolParserCmd(void)
 
 }
 
-int ProcessString(unsigned char* buffer) // return 0 if quit, else return 1
+int ProcessString(char* buffer) // return 0 if quit, else return 1
 {
 	int    bStatus;
 	int    i;
@@ -88,7 +94,7 @@ int ProcessString(unsigned char* buffer) // return 0 if quit, else return 1
 return bStatus;
 }
 
-int do_dbg_mmio(unsigned char * cmd[], unsigned int param_count)
+int do_dbg_mmio(char * cmd[], unsigned int param_count)
 {
     unsigned int 	reg_index;
 	unsigned int 	reg_data;
@@ -97,7 +103,7 @@ int do_dbg_mmio(unsigned char * cmd[], unsigned int param_count)
 	{
 		reg_index = StoH(cmd[1]);
         reg_data = readl(video_pci_prop.mapped_mmioBase+reg_index);
-		printf ("\nRead MMIO %x = 0x%08x\n", reg_index, reg_data);
+		printf("\nRead MMIO %x = 0x%08x\n", reg_index, reg_data);
 	}
 	else if(param_count == 3)	//register write
 	{
@@ -111,78 +117,173 @@ int do_dbg_mmio(unsigned char * cmd[], unsigned int param_count)
 		printf("\nParse Error!\n");
 	}
 	
-	return 1;
+	return TRUE;
 }
 
-int do_dbg_ts(unsigned char * cmd[], unsigned int param_count)
+int do_dbg_ts(char * cmd[], unsigned int param_count)
 {
     printf("Temp : %d C\n",dout_to_temp(GetTemperature())/1000);
+	return TRUE;
 }
 
-int do_dbg_voltage(unsigned char * cmd[], unsigned int param_count)
+int do_dbg_voltage(char * cmd[], unsigned int param_count)
 {
     printf("voltage : %d mV\n",( GetVoltage()*1000+1157200)/1869);
+	return TRUE;
 }
 
-int do_dbg_print_info(unsigned char * cmd[], unsigned int param_count)
+int do_dbg_print_info(char * cmd[], unsigned int param_count)
 {
-    sf_init(video_pci_prop.mapped_mmioBase);
+    sf_init();
     read_fw_version();
-    read_PCIe(video_pci_prop.mapped_mmioBase);
+    read_PCIe();
     printf("DDR Version : DDR4\n");
-    read_bitwidth(video_pci_prop.mapped_mmioBase);                        
+    read_bitwidth();                        
     printf("Memory Clk : %d MHz\n",get_mpll());
     printf("Elite Clk : %d MHz\n",get_vepll(EPLL_REG));   
     printf("Temp : %d C\n",dout_to_temp(GetTemperature())/1000);
     printf("voltage : %d mV\n",( GetVoltage()*1000+1157200)/1869);     
+	return true;
 }
 
-int do_dbg_flash(unsigned char * cmd[], unsigned int param_count)
+int do_dbg_flash(char * cmd[], unsigned int param_count)
 {
-    //sf_flash_test(param_count,cmd);
+	sf_init();
+    sf_flash_test(param_count,cmd);
+	return TRUE;
 }
 
-int do_dbg_mem_test(unsigned char * cmd[], unsigned int param_count)
+int do_dbg_mem_test(char * cmd[], unsigned int param_count)
 {
     chip_mem_connection_test(param_count,cmd);
+	return TRUE;
 }
 
-int do_dbg_program_fw(unsigned char * cmd[], unsigned int param_count)
+int do_dbg_i2c_test(char * cmd[], unsigned int param_count)
 {
-    sf_init(video_pci_prop.mapped_mmioBase);
-    if(strcmp(cmd[1],"-p")==0 || strcmp(cmd[1],"-P")==0)
-    {
-        flash_vbios(cmd[2]);
-    }
-    else if(strcmp(cmd[1],"-d")==0 || strcmp(cmd[1],"-D")==0)
-    {
-        dump_vbios(cmd[2]);
-    }
+	i2c_prog(param_count,cmd);
+	return TRUE;
+}
+int do_dbg_efuse_test(char * cmd[], unsigned int param_count)
+{
+	//helpinfo();
+	efuse_test(param_count,cmd);
+	return TRUE;
+}
+int do_dbg_dp_test(char * cmd[], unsigned int param_count)
+{
+    chip_mem_connection_test(param_count,cmd);
+	return TRUE;
 }
 
-int do_dbg_clk(unsigned char * cmd[], unsigned int param_count)
+int do_dbg_program_fw(char * cmd[], unsigned int param_count)
+{
+	unsigned int dump_file_size = MAX_VIDEO_ROM_SIZE;
+    sf_init();
+	if(param_count>=2)
+    {
+		flash_vbios(cmd[1]);
+	}
+	else
+	{
+		printf("  prog filename: program spi flash.\n");
+	}
+	return TRUE;
+}
+
+int do_dbg_dump_fw(char * cmd[], unsigned int param_count)
+{
+	unsigned int dump_file_size = MAX_VIDEO_ROM_SIZE;
+    sf_init();
+	if(param_count>=2)
+    {
+		if(param_count==3)
+		{
+			dump_file_size = atoi(cmd[2]);
+		}
+		else if(param_count==2)
+		{
+			//read file size from vbios
+			dump_file_size = sf_read_data(FW_FILE_SIZE_OFFSET,FW_FILE_SIZE_LEN);
+			if(dump_file_size==0)
+			{
+				dump_file_size = MAX_VIDEO_ROM_SIZE;
+				printf("Use default file size! ");
+			}
+			else
+			{
+				printf("Read file size from spi flash! ");
+			}
+		}
+
+		printf("Dump file size = %d\n", dump_file_size);
+		dump_vbios(cmd[1],dump_file_size);
+	}
+	else
+	{
+    	printf("  dump filename [filesize(byte)]: dump spi flash file.\n");
+	}
+	return TRUE;
+}
+
+int do_dbg_clk(char * cmd[], unsigned int param_count)
 {
     clk_prog(param_count,cmd);
+	return TRUE;
 }
 
-int do_dbg_help(unsigned char * cmd[], unsigned int param_count)
+int do_dbg_help(char * cmd[], unsigned int param_count)
 {
 	helpinfo();
 	return TRUE;
 }
 
-int do_dbg_quit(unsigned char * cmd[], unsigned int param_count)
+int do_dbg_quit(char * cmd[], unsigned int param_count)
 {
     return FALSE;
 }
 
 void helpinfo(void)
 {
-	printf("> ts         --- print temperature\n");
-	printf("> vcore      --- print vcore\n");    
-    printf("> clk        --- read/write clock\n");
-    printf("> memtest    --- miu test connection\n");  
-    printf("> prog       --- program or dump rom to/from flash\n");
-    printf("> mmio       --- read/write register\n");  
-    printf("> print      --- print all information(pcie info/mem info/vcore/clk/temp)\n");
+    printf("  help/?     --- print help info\n");
+    printf("  q          --- quit\n");
+	printf("  ts         --- print temperature\n");
+	printf("  vcore      --- print vcore\n");    
+    printf("  clk        --- read/write clock\n");
+    printf("  memtest    --- miu test connection\n");  
+    printf("  prog       --- program rom to flash\n");
+    printf("  dump       --- dump data from flash saved to file\n");	
+    printf("  mmio       --- read/write register\n");  
+    printf("  i2c        --- i2c read/write data\n"); 	
+    printf("  print      --- print all information(pcie info/mem info/vcore/clk/temp)\n");
+	printf("  efuse      --- efuse hdcp key1.4/2.2 function\n");
+}
+
+
+/*
+unsigned char GetKey(void)
+{
+	unsigned char key;    
+#ifdef __ubuntu__
+	key = getchar();
+#endif
+#ifdef __dos__
+	key = getch();
+#endif
+	//if (key == 0)
+	//	key = (0x80 | getchar());
+	return key;
+}*/
+char GetKey(void)
+{
+	char key;  
+/*#ifdef __dos__
+	key = getch();
+#endif
+#ifdef __ubuntu__*/
+	key = getchar();
+//#endif
+	//if (key == 0)
+	//	key = (0x80 | getch());
+	return key;
 }

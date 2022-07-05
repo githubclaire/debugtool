@@ -1,9 +1,9 @@
-#include "def.h"s
+#include "def.h"
 
 unsigned int  maxVCO[2] = {1600,2400};
 extern VIDEO_PCI_PROP video_pci_prop;
 
-int log2(unsigned int val)
+int mathlog2(unsigned int val)
 {
 	int i=0;
 	while(val>1)
@@ -140,7 +140,7 @@ void set_epll(int fclk)
     {
         bandNo = 1;
     }
-    OD = log2((unsigned int)(maxVCO[bandNo]/fclk));
+    OD = mathlog2((unsigned int)(maxVCO[bandNo]/fclk));
     if(OD>3)
         OD=3;
     M = (fclk<<OD)/reference_freq - 2;
@@ -225,7 +225,7 @@ void set_vpll(int fclk)
     {
         bandNo = 1;
     }
-    OD = log2((unsigned int)(maxVCO[bandNo]/fclk));
+    OD = mathlog2((unsigned int)(maxVCO[bandNo]/fclk));
     if(OD>3)
         OD=3;
     M = ((fclk<<OD)/reference_freq) - 2;
@@ -270,7 +270,7 @@ void wait_pll_ok(PLL_LOCK pll)
 
 void clk_prog(int argc, char *argv[])
 {
-	int   clk;
+	int  clk;
 
 	if(argc == 2)
 	{
@@ -292,7 +292,7 @@ void clk_prog(int argc, char *argv[])
         else if (strcmp(argv[1], "m") == 0)
 		{	
             printf("Memory Clk : %d MHz\n",get_mpll());
-            read_bitwidth(video_pci_prop.mapped_mmioBase);            
+            read_bitwidth();            
             printf("DDR Version : DDR4\n");
 		}	
 		else
@@ -302,7 +302,7 @@ void clk_prog(int argc, char *argv[])
 	}
 	else if(argc == 3)
 	{		
-		clk = StoD(argv[2]);
+		clk = atoi(argv[2]);
 		if (strcmp(argv[1], "e") == 0)
 		{	
             set_epll(clk*2);
@@ -315,7 +315,7 @@ void clk_prog(int argc, char *argv[])
 		}
         else if (strcmp(argv[1], "f") == 0)
 		{
-            sf_init(video_pci_prop.mapped_mmioBase);
+            sf_init();
             set_epll(clk*2);
             printf("EClk = %d MHz\n",get_vepll(EPLL_REG));
             set_vpll(clk*2);
@@ -334,9 +334,9 @@ void clk_prog(int argc, char *argv[])
 
 }
 
-clk_help_info()
+void clk_help_info(void)
 {
-    printf("> clock d/e/v: clock d/e/v read.\n");
-    printf("> clock e/v data(MHz)]: clock e/v write.\n");
-    printf("> clock f data(MHz)]: clock e/v write to spi flash.\n");
+    printf("  clk d/e/v: clock d/e/v read.\n");
+    printf("  clk e/v data(MHz)]: clock e/v write.\n");
+    printf("  clk f data(MHz)]: clock e/v write to spi flash.\n");
 }

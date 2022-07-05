@@ -1,8 +1,11 @@
 #include "def.h"
 
+extern VIDEO_PCI_PROP video_pci_prop;
+
+
 #define is_digit(c)	((c) >= '0' && (c) <= '9')
 
-unsigned int StoH(unsigned char * s)
+unsigned int StoH(char * s)
 {
 	unsigned int hdata;
 	int i = 0;
@@ -20,23 +23,8 @@ unsigned int StoH(unsigned char * s)
 	}
 	return hdata;
 }
-//for dos delay
-void udelay(int t)
-{
-    volatile unsigned int i,j;
-    for(i=0;i<t;i++)
-    {
-        for(j=0;j<367;j++);
-    }
-}
 
-void mdelay(int x)
-{
-	int i;
-	for (i = 0; i < x; i ++)
-			udelay(1000);
-}
-/*
+#ifdef __ubuntu__
 void udelay(int cont)
 {
     usleep(cont);
@@ -50,12 +38,44 @@ void mdelay(int cont)
         udelay(1000);
     }
 }
-*/
+#endif
 
+#ifdef __dos__
+void udelay(int x)
+{
+	unsigned int i;
+
+	for (i = 0; i < x; ++i){
+		_asm{
+			mov	dx, 0x0ed 
+			out	dx, al
+		}
+	}
+}
+
+void mdelay(int x)
+{
+	int i;
+	for (i = 0; i < x; i ++)
+			udelay(1000);
+}
+#endif
+
+void write8(unsigned int index, unsigned char value)
+{
+	*(unsigned char*)(video_pci_prop.mapped_mmioBase + index) = value;
+}
+
+unsigned char read8(unsigned int index)
+{
+    return *((unsigned char*)(video_pci_prop.mapped_mmioBase+index));
+}
+
+/*
 int atoi(const char *s)
 {
 	int i = 0;
-	if(s==0)
+	if(s==NULL)
 		return 0;
 	while (is_digit(*s))
     {
@@ -79,7 +99,7 @@ unsigned int StoD(unsigned char * s)
 	}
 	return hdata;
 }
-
+*/
 
 int tolower(int c)  
 {  
@@ -93,31 +113,104 @@ int tolower(int c)
         }  
 } 
 
-int htoi(const char *s)  
+unsigned long htoi(const char *s)  
 {  
     int i;  
-    int n = 0;  
+    unsigned long n = 0;  
     if (s[0] == '0' && (s[1]=='x' || s[1]=='X'))  
-        {  
-            i = 2;  
-        }  
+    {  
+        i = 2;  
+    }  
     else  
-        {  
-            i = 0;  
-        }  
+    {  
+        i = 0;  
+    }  
     for (; (s[i] >= '0' && s[i] <= '9') || (s[i] >= 'a' && s[i] <= 'z') || (s[i] >='A' && s[i] <= 'Z');++i)  
+    {  
+        if (tolower(s[i]) > '9')  
         {  
-            if (tolower(s[i]) > '9')  
-                {  
-                    n = 16 * n + (10 + tolower(s[i]) - 'a');  
-                }  
-            else  
-                {  
-                    n = 16 * n + (tolower(s[i]) - '0');  
-                }  
+            n = 16 * n + (10 + tolower(s[i]) - 'a');  
         }  
+        else  
+        {  
+            n = 16 * n + (tolower(s[i]) - '0');  
+        }  
+    }  
+
     return n;  
 }  
+
+#ifdef __dos__
+unsigned short ReadPciCfgWord(unsigned char bus, unsigned char dev, unsigned char func, unsigned char reg)
+{
+	unsigned short v;
+	unsigned int flag = 0;
+
+	_asm pushfd;
+	_asm pop flag;
+	_asm cli;
+	outpd(0xCF8, (0x80000000|(bus<<16)|(dev<<11)|(func<<8)|(reg&0xFC)));
+	v = inpw(0xCFC+(reg&3));
+	_asm push flag;
+	_asm popfd;
+
+	return v;
+}
+
+unsigned int ReadPciCfgDword(unsigned char bus, unsigned char dev, unsigned char func, unsigned char reg)
+{
+	unsigned int v, flag = 0;
+
+	_asm pushfd;
+	_asm pop flag;
+	_asm cli;
+	outpd(0xCF8, (0x80000000|(bus<<16)|(dev<<11)|(func<<8)|(reg&0xFC)));
+	v = inpd(0xCFC);
+	_asm push flag;
+	_asm popfd;
+
+	return v;
+}
+
+void WritePciCfgByte(unsigned char bus, unsigned char dev, unsigned char func, unsigned char reg, unsigned char v)
+{
+	unsigned int flag = 0;
+
+	_asm pushfd;
+	_asm pop flag;
+	_asm cli;
+	outpd(0xCF8, (0x80000000|(bus<<16)|(dev<<11)|(func<<8)|(reg&0xFC)));
+	outp(0xCFC+(reg&3), v);
+	_asm push flag;
+	_asm popfd;
+}
+
+void WritePciCfgWord(unsigned char bus, unsigned char dev, unsigned char func, unsigned char reg, unsigned short v)
+{
+	unsigned int flag = 0;
+
+	_asm pushfd;
+	_asm pop flag;
+	_asm cli;
+	outpd(0xCF8, (0x80000000|(bus<<16)|(dev<<11)|(func<<8)|(reg&0xFC)));
+	outpw(0xCFC+(reg&3), v);
+	_asm push flag;
+	_asm popfd;
+}
+
+void WritePciCfgDword(unsigned char bus, unsigned char dev, unsigned char func, unsigned char reg, unsigned int v)
+{
+	unsigned int flag = 0;
+
+	_asm pushfd;
+	_asm pop flag;
+	_asm cli;
+	outpd(0xCF8, (0x80000000|(bus<<16)|(dev<<11)|(func<<8)|(reg&0xFC)));
+	outpd(0xCFC, v);
+	_asm push flag;
+	_asm popfd;
+}
+
 int ReadMMIO(unsigned int addr,int size)
 {
   int value = -1;
@@ -125,15 +218,15 @@ int ReadMMIO(unsigned int addr,int size)
   switch(size)
   {
     case 0:
-      value = *(unsigned char*)(g_mmiobase + addr);
+      value = *(unsigned char*)(video_pci_prop.MmioBase + addr);
       break;
       
     case 1:
-      value = *(unsigned short*)(g_mmiobase+addr);
+      value = *(unsigned short*)(video_pci_prop.MmioBase+addr);
       break;
       
     case 2:
-      value = *(unsigned int*)(g_mmiobase+addr);
+      value = *(unsigned int*)(video_pci_prop.MmioBase+addr);
   }
 
   return value;
@@ -146,15 +239,15 @@ void WriteMMIO(unsigned int addr,unsigned int value,int size)
   switch(size)
   {
     case S3X_BYTE:
-      *(unsigned char*)(g_mmiobase + addr) = (unsigned char)(value&0xFF);
+      *(unsigned char*)(video_pci_prop.MmioBase + addr) = (unsigned char)(value&0xFF);
       break;
       
     case S3X_WORD:
-      *(unsigned short*)(g_mmiobase+addr) = (unsigned short)(value&0xFFFF);
+      *(unsigned short*)(video_pci_prop.MmioBase+addr) = (unsigned short)(value&0xFFFF);
       break;
       
     case S3X_DWORD:
-      *(unsigned int*)(g_mmiobase+addr) = value;
+      *(unsigned int*)(video_pci_prop.MmioBase+addr) = value;
   }
 }
 
@@ -170,3 +263,4 @@ void WriteMMIOMask(unsigned int address,unsigned int value, unsigned int mask){
           WriteMMIO(address, temp, S3X_DWORD);
                  
 }
+#endif

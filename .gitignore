@@ -1,0 +1,13 @@
+*.o
+*.d
+*.log
+*.err
+*.obj
+*.exe
+*.map
+*.mk
+*.mk1
+*.sym
+*.lk1
+/.vscode
+glenfly_tool_debug

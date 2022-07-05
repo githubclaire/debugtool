@@ -53,11 +53,15 @@ typedef enum
 	EPLL_LOCK
 }PLL_LOCK;
 
+int mathlog2(unsigned int val);
 int get_vepll(unsigned int addr);
+int get_mpll(void);
 void set_epll(int fclk);
 void epll_stop(void);
 void vpll_stop(void);
 void set_vpll(int fclk);
 void clk_prog(int argc, char *argv[]);
-
+void wait_pll_ok(PLL_LOCK pll);
+void clk_help_info(void);
+void clk_prog(int argc, char *argv[]);
 #endif

@@ -16,8 +16,37 @@
 
 typedef struct
 {
-    int vendorid;
-    int deviceid;
+    struct
+    {
+        unsigned int vendorid;
+        unsigned int deviceid;
+    }id;
+    struct
+    {
+        unsigned long mmiobase;
+        unsigned long fbbase;
+    }addr;
+    struct
+    {
+        unsigned int serialport0;
+        unsigned int serialport1;
+        unsigned int serialport2;
+        unsigned int i2c_delay;
+    }i2c;
+    struct
+    {
+        unsigned int uart_enable;
+        unsigned int ioport_no;
+        unsigned int uart_baud_rate;
+    }uart;
+    struct 
+    {
+        unsigned int debug;
+    }print;
+    struct 
+    {
+        unsigned int mmio;
+    }reg;
 } configuration;
 
 typedef enum

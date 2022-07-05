@@ -15,7 +15,28 @@
 #define FP_SECTOR_SIZE 4096	//size of flash part sector (in bytes)
 #define FP_BLOCK_SIZE 32768	//size of flash part block (in bytes)
 
-int flash_vbios(char *romImageName);
-int dump_vbios(char *romImageName);
+#define FW_HEADER_VERSION_OFFSET 0xF002
+#define FW_CHECKSUM_OFFSET 0xF003
+#define FW_VENDOR_ID_OFFSET 0xF008
+#define FW_DEVICE_ID_OFFSET 0xF00A
+#define FW_MD5_VALUE_OFFSET 0xF0B4
+#define FW_FILE_SIZE_OFFSET 0xF0C4
 
+#define FW_HEADER_VERSION_SIZE 1
+#define FW_CHECKSUM_SIZE 1
+#define FW_VENDOR_ID_SIZE 2
+#define FW_DEVICE_ID_SIZE 2
+#define FW_MD5_VALUE_SIZE 16
+#define FW_FILE_SIZE_LEN 4
+
+void flash_vbios(char *romImageName);
+int dump_vbios(char *romImageName, unsigned int dump_file_size);
+void MD5_Caculate(char* romImage_Name2,unsigned char *MD5Value);
+void Generate_new_Rom_file_without_MD5(char *romImageName1,char* romImageName2);
+unsigned char* Get_ROM_MD5_Value(char* romImageName);
+void Check_Rom_Device_Id(char* romImageName);
+int isMD5check(char* romImageName);
+unsigned char* read_info_from_file(char *filename, unsigned int seeknum, unsigned int readsize);
+int FlashRom(FILE *pStream, unsigned int dwFileSize);
+unsigned int get_file_Size(char *filename);
 #endif

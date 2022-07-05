@@ -1,4 +1,58 @@
-glenfly_tool_debug:main.c
-	gcc -Wall -o glenfly_tool_debug main.c cmd.c pcie.c ini.c share.c common.c md5.c clk.c memtest.c spi_flash.c ts.c flash.c /usr/lib/x86_64-linux-gnu/libpci.a -lz -ludev 
+########
+# 
+# -----------------------------------------------
+# REFERENCE:
+# 1. dependency generation
+#    http://make.mad-scientist.net/papers/advanced-auto-dependency-generation/
+########
+
+
+OBJTREE := .objs/
+DEPDIR := .deps
+
+CC = gcc
+LD = gcc
+CFLAGS = -Wall
+LDFLAGS = -lz -ludev -lpci
+
+COBJS = main.o cmd.o pcie.o share.o common.o clk.o ini.o md5.o  spi_flash.o flash.o ts.o memtest.o 
+COBJS += i2c.o
+OBJS = $(addprefix $(OBJTREE),$(COBJS))
+
+EXECUTABLE := glenfly_tool_debug
+
+DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.Td
+POSTCOMPILE = mv -f $(DEPDIR)/$*.Td $(DEPDIR)/$*.d && touch $@
+
+.PHONY: all clean
+
+
+all:  $(OBJTREE)
+	$(MAKE) $(EXECUTABLE)
+
+$(OBJTREE):
+	@mkdir -p $@
+
+$(EXECUTABLE) : $(OBJS)
+	@echo "[LD] $@"
+#	$(LD) $(CFLAGS) $(CFILE) $(AFILE) -o $@ $(LDFLAGS)
+	$(LD) $(OBJS) -o $@ $(LDFLAGS)
+
+$(OBJTREE)%.o : %.c $(DEPDIR)/%.d | $(DEPDIR)
+	@echo "[CC] $@"
+	$(CC) $(DEPFLAGS) $(CFLAGS) -c $< -o $@
+	$(POSTCOMPILE)
+
+$(DEPDIR):
+	@echo "dep"
+	@mkdir -p $@
+
 clean:
-	rm -fr *.o *~ glenfly_tool_debug
+	@echo "cleaning."
+	@rm -f $(EXECUTABLE) $(DEPDIR)/*.d $(OBJTREE)*.o
+	@rmdir $(DEPDIR) $(OBJTREE)
+
+DEPFILES := $(COBJS:%.o=$(DEPDIR)/%.d)
+$(DEPFILES):
+include $(wildcard $(DEPFILES))
+

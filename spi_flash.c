@@ -1,8 +1,8 @@
 
-#include "spi_flash.h"
+#include "def.h"
 #include <stdio.h>
 
-
+extern VIDEO_PCI_PROP video_pci_prop;
 static unsigned long SF_BASE_ADDR;
 
 #define SFPRT printf
@@ -15,7 +15,7 @@ volatile unsigned long sectorNo, addrW,addrR, status_index;
 //for linux
 void delay_us(int cont)
 {
-    usleep(cont);
+    udelay(cont);
 }
 
 void sf_exit(unsigned char extcode)
@@ -25,11 +25,11 @@ void sf_exit(unsigned char extcode)
 }
  
 // get sf base address
-void sf_init(unsigned long MmioBaseAddr)
+void sf_init(void)
 {
-	SF_BASE_ADDR = MmioBaseAddr;
+	SF_BASE_ADDR = video_pci_prop.mapped_mmioBase;
 	//enable GPIO_ST(Pad input) for sclk pad
-	writel(0x80,MmioBaseAddr+0xa0024);
+	writel(0x80,SF_BASE_ADDR+0xa0024);
 }
 
 unsigned int sf_read_data(unsigned int addr, unsigned char len)
@@ -295,6 +295,26 @@ void sf_sector_erase(unsigned int addr)
 	}
 }
 
+void sf_flash_test(int argc, char *argv[])
+{
+	int sector_num = 1;
+
+    if(strcmp(argv[1],"-f")==0 || strcmp(argv[1],"-F")==0)
+    {
+		if(argc==3)
+		{
+			sector_num = atoi(argv[2]);
+		}
+        sf_sector_erase(sector_num*FP_SECTOR_SIZE);
+    }
+}
+
+void sf_help_info(void)
+{
+	printf("  sf -w addr data [len]: write spi flash data.\n");
+	printf("  sf -r addr [len]: read spi flash data.\n");
+	printf("  sf -f sector_num: erase spi flash.\n");
+}
 /*void writel(unsigned int data,unsigned long MmioBaseAddr)
 {
 	*(unsigned long *)(MmioBaseAddr) = data;

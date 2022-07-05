@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include "common.h"
 #include "def.h"
+//#include "reconfig.h"
 
 extern VIDEO_PCI_PROP video_pci_prop;
 
@@ -24,14 +25,14 @@ extern VIDEO_PCI_PROP video_pci_prop;
 //void WritePciCfgDword(unsigned char bus, unsigned char dev, unsigned char func, unsigned char reg, unsigned int v);
 //unsigned int GetMMIOBase();
 
-
+/*
 typedef enum
 { 
   S3X_BYTE =0,
   S3X_WORD =1,
   S3X_DWORD=2,
 }SIZE;
-
+*/
 unsigned int g_mmiobase = 0;
 FILE *in_file,*out_file,*pFile,*fw;
 unsigned char HDCPKeyProg[512];
