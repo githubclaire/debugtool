@@ -53,8 +53,3 @@ i2c index addr subaddr data
 Print all info(pcie info/mem info/vcore/clk/temp)
 ````
 print
-<<<<<<< HEAD
-````
-=======
-````
->>>>>>> e69134da1369fe50192430801b5527efae44ba27
