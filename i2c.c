@@ -452,3 +452,4 @@ void i2c_help_info(void)
     printf("	i2c 0/1/2 deviceAddr subAddr [data]: 0->CRT 1->HDMI/DP0 2->HDMI/DP1 read/write.\n");
 	printf(" ex. read EDID, deviceAddr is 0xa0  cmd: i2c 0 a0");
 }
+

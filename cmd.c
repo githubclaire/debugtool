@@ -260,20 +260,7 @@ void helpinfo(void)
 }
 
 
-/*
-unsigned char GetKey(void)
-{
-	unsigned char key;    
-#ifdef __ubuntu__
-	key = getchar();
-#endif
-#ifdef __dos__
-	key = getch();
-#endif
-	//if (key == 0)
-	//	key = (0x80 | getchar());
-	return key;
-}*/
+
 char GetKey(void)
 {
 	char key;  

@@ -96,8 +96,8 @@ void CToolGetInput(char* buffer, unsigned int size)
 
     j = i = 0;
     do{
-         ch = GetKey();
-        //ch=getchar();
+        ch = getchar();
+
         if((ch != KEY_ENTER) && (ch != KEY_BACKSPACE))
         {
             if(ch == KEY_UP_DOWN_PRE)
@@ -322,4 +322,7 @@ void  CToolClearHisCmd(void)
     }
 }
 
-							 
+
+
+
+
