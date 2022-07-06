@@ -3,10 +3,10 @@
 
 #define KEY_ESC                     (0x1B)
 #define KEY_BACKSPACE               (0x08)
+
+//#ifdef __ubuntu__
 #define KEY_ENTER                   (0x0A)
-/*#ifdef __ubuntu__
-#define KEY_ENTER                   (0x0A)
-#endif
+/*#endif
 #ifdef __dos__
 #define KEY_ENTER                   (0x0D)
 #endif*/

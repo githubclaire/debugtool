@@ -2,6 +2,7 @@
 
 extern VIDEO_PCI_PROP video_pci_prop;
 
+
 #define is_digit(c)	((c) >= '0' && (c) <= '9')
 
 unsigned int StoH(char * s)
@@ -208,5 +209,58 @@ void WritePciCfgDword(unsigned char bus, unsigned char dev, unsigned char func, 
 	outpd(0xCFC, v);
 	_asm push flag;
 	_asm popfd;
+}
+
+int ReadMMIO(unsigned int addr,int size)
+{
+  int value = -1;
+
+  switch(size)
+  {
+    case 0:
+      value = *(unsigned char*)(video_pci_prop.MmioBase + addr);
+      break;
+      
+    case 1:
+      value = *(unsigned short*)(video_pci_prop.MmioBase+addr);
+      break;
+      
+    case 2:
+      value = *(unsigned int*)(video_pci_prop.MmioBase+addr);
+  }
+
+  return value;
+
+}
+
+void WriteMMIO(unsigned int addr,unsigned int value,int size)
+{
+
+  switch(size)
+  {
+    case S3X_BYTE:
+      *(unsigned char*)(video_pci_prop.MmioBase + addr) = (unsigned char)(value&0xFF);
+      break;
+      
+    case S3X_WORD:
+      *(unsigned short*)(video_pci_prop.MmioBase+addr) = (unsigned short)(value&0xFFFF);
+      break;
+      
+    case S3X_DWORD:
+      *(unsigned int*)(video_pci_prop.MmioBase+addr) = value;
+  }
+}
+
+void WriteMMIOMask(unsigned int address,unsigned int value, unsigned int mask){
+          unsigned int temp;
+                  unsigned int reg_temp;
+          reg_temp = ReadMMIO(address,S3X_DWORD);
+                 // printf("reg_temp 0x%8.8x ;",reg_temp);
+                                  //printf("value is 0x%8.8x;",value);
+                                 // printf("mask is 0x%8.8x;",mask);
+          temp = ((reg_temp& (~mask)) | (value & mask));
+                 // printf("temp_MMIO is 0x%8.8x;",temp);
+          WriteMMIO(address, temp, S3X_DWORD);
+                 
 }
 #endif

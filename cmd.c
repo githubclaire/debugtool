@@ -17,7 +17,9 @@ DBG_CMD_STRUCT dbg_cmd_table[] = {
 	{"clk", do_dbg_clk},  
 	{"memtest", do_dbg_mem_test},
 	{"i2c", do_dbg_i2c_test},
-	{"dp", do_dbg_dp_test},		        
+	{"dp", do_dbg_dp_test},	
+	{"efuse", do_dbg_efuse_test},
+
 };
 
 #define DBG_CMD_TABLE_SIZE (sizeof(dbg_cmd_table) / sizeof(DBG_CMD_STRUCT))
@@ -162,7 +164,12 @@ int do_dbg_i2c_test(char * cmd[], unsigned int param_count)
 	i2c_prog(param_count,cmd);
 	return TRUE;
 }
-
+int do_dbg_efuse_test(char * cmd[], unsigned int param_count)
+{
+	//helpinfo();
+	efuse_test(param_count,cmd);
+	return TRUE;
+}
 int do_dbg_dp_test(char * cmd[], unsigned int param_count)
 {
     chip_mem_connection_test(param_count,cmd);
@@ -171,6 +178,7 @@ int do_dbg_dp_test(char * cmd[], unsigned int param_count)
 
 int do_dbg_program_fw(char * cmd[], unsigned int param_count)
 {
+	unsigned int dump_file_size = MAX_VIDEO_ROM_SIZE;
     sf_init();
 	if(param_count>=2)
     {
@@ -248,22 +256,21 @@ void helpinfo(void)
     printf("  mmio       --- read/write register\n");  
     printf("  i2c        --- i2c read/write data\n"); 	
     printf("  print      --- print all information(pcie info/mem info/vcore/clk/temp)\n");
+	printf("  efuse      --- efuse hdcp key1.4/2.2 function\n");
 }
 
 
 
-unsigned char GetKey(void)
+char GetKey(void)
 {
-	unsigned char key;    
-#ifdef __ubuntu__
-	key = getchar();
-#endif
-#ifdef __dos__
+	char key;  
+/*#ifdef __dos__
 	key = getch();
 #endif
+#ifdef __ubuntu__*/
+	key = getchar();
+//#endif
 	//if (key == 0)
-	//	key = (0x80 | getchar());
+	//	key = (0x80 | getch());
 	return key;
 }
-
-
