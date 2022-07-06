@@ -37,11 +37,11 @@ jobs:
           run: |
             make | tee build.log
       - name: Tar files
-        run: tar -czvf bin.tar.gz ./* ./build.log
-      - name: Archive exec
+        run: tar -czvf bin.tar.gz ./glenfly_tool_debug ./build.log
+      - name: Archive glendbg
         uses: actions/upload-artifact@v3
         with:
-          name: exec
+          name: glendbg
           path: |
             bin.tar.gz
             build.log
