@@ -311,3 +311,4 @@ int isMD5check(char* romImageName)
 
 	return FALSE;
 }
+

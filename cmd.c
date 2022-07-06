@@ -171,7 +171,6 @@ int do_dbg_dp_test(char * cmd[], unsigned int param_count)
 
 int do_dbg_program_fw(char * cmd[], unsigned int param_count)
 {
-	unsigned int dump_file_size = MAX_VIDEO_ROM_SIZE;
     sf_init();
 	if(param_count>=2)
     {
@@ -266,3 +265,5 @@ unsigned char GetKey(void)
 	//	key = (0x80 | getchar());
 	return key;
 }
+
+
