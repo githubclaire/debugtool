@@ -62,8 +62,6 @@ int main(int argc, char *argv[])
     char* config_file_name = "glendbg.ini";
     
     init_config_parameters(&config);
-    //config.id.vendorid = 0x6766;
-    //config.id.deviceid = 0x3d00;
 
     if(argc == 2)
     {
