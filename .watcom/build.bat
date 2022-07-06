@@ -4,14 +4,14 @@ pushd ..\
 set CODEPATH=%CD%
 popd
 
-pushd ..\..\
-set WATPATH=%CD%
-popd
+rem pushd ..\..\
+rem set WATPATH=%CD%
+rem popd
 
-set WATCOM=%WATPATH%\WATCOM
-set path=%WATPATH%\WATCOM\binnt
+rem set WATCOM=%WATPATH%\WATCOM
+rem set path=%WATPATH%\WATCOM\binnt
 
-if NOT EXIST %WATCOM% goto end
+rem if NOT EXIST %WATCOM% goto end
 
 if /I "%2" EQU "x86" (
     set ARCH=x86

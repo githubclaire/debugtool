@@ -1,10 +1,3 @@
-/************************************************************/
-/*  Project   : HDCP E-Fuse Read/Write for CGU001   */
-/*  Author    : CHEERYCHEN               */
-/*  Date    : 12, 7, 2020              */
-/*  Rev.    : 1.0.0.0                 */
-/*  Compiler  : Watcom (DOS4GW)             */
-/************************************************************/
 #include <conio.h>
 #include <stdio.h>
 #include <math.h>
@@ -12,28 +5,7 @@
 #include <stdlib.h>
 #include "common.h"
 #include "def.h"
-//#include "reconfig.h"
 
-extern VIDEO_PCI_PROP video_pci_prop;
-
-
-//unsigned char ReadPciCfgByte(unsigned char bus, unsigned char dev, unsigned char func, unsigned char reg);
-//unsigned short ReadPciCfgWord(unsigned char bus, unsigned char dev, unsigned char func, unsigned char reg);
-//unsigned int ReadPciCfgDword(unsigned char bus, unsigned char dev, unsigned char func, unsigned char reg);
-//void WritePciCfgByte(unsigned char bus, unsigned char dev, unsigned char func, unsigned char reg, unsigned char v);
-//void WritePciCfgWord(unsigned char bus, unsigned char dev, unsigned char func, unsigned char reg, unsigned short v);
-//void WritePciCfgDword(unsigned char bus, unsigned char dev, unsigned char func, unsigned char reg, unsigned int v);
-//unsigned int GetMMIOBase();
-
-/*
-typedef enum
-{ 
-  S3X_BYTE =0,
-  S3X_WORD =1,
-  S3X_DWORD=2,
-}SIZE;
-*/
-unsigned int g_mmiobase = 0;
 FILE *in_file,*out_file,*pFile,*fw;
 unsigned char HDCPKeyProg[512];
 unsigned int  HDCPKeyProgCount = 0;
@@ -44,80 +16,6 @@ unsigned int addr_82C0 =0x82C0;
 unsigned int addr_33688 =0x33688;
 unsigned int addr_332DC =0x332DC;
 unsigned int addr_82BC =0x82BC;
-
-
-//get the first adapter's mmio base address from pci config space
-unsigned int ReadPciCfgDword(unsigned char bus, unsigned char dev, unsigned char func, unsigned char reg)
-{
-  unsigned int v, flag = 0;
-
-  _asm pushfd;
-  _asm pop flag;
-  _asm cli;
-  outpd(0xCF8, (0x80000000|(bus<<16)|(dev<<11)|(func<<8)|(reg&0xFC)));
-  v = inpd(0xCFC);
-  _asm push flag;
-  _asm popfd;
-
-  return v;
-}
-
-unsigned int GetMMIOBase()
-{
-  unsigned char bus, dev;
-  unsigned int MMIOBaseAddress;
-  unsigned short vendorID;
-  unsigned short deviceID;
-/*  
-  for ( bus = 0; bus < 255; bus++)
-  {
-    for ( dev = 0; dev < 32; dev++)
-    {
-      vendorID = ReadPciCfgWord(bus, dev, 0, 0x00);
-      
-      if (vendorID != PCI_VENDORID_ZX)
-      {
-        continue;
-      }
-
-      deviceID = ReadPciCfgWord(bus, dev, 0, 0x02);
-
-      if ((deviceID & 0xFFF0) == PCI_DEVICEID_CGU001)
-      {
-        MMIOBaseAddress = ReadPciCfgDword(bus, dev, 0, 0x10);
-        MMIOBaseAddress &= 0xFFFFFF00;
-        return MMIOBaseAddress;
-      }
-
-    }
-  }
-  return -1;
-*/  
-  MMIOBaseAddress = ReadPciCfgDword(1, 0, 0, 0x10);
-  MMIOBaseAddress &= 0xFFFFFF00;
-  return MMIOBaseAddress;
-}
-/*
-unsigned int StoH(unsigned char * s)
-{
-  unsigned int hdata;
-  int i=0;
-  hdata = 0;
-  while (s[i] != '\0')
-  {
-    if (s[i] >= '0' && s[i] <= '9')
-      hdata = hdata * 16 + ( s[i] - 0x30) ;
-    else if (s[i] >= 'a' && s[i] <= 'f')
-      hdata = hdata * 16 + (s[i] - 0x61 + 0x0a);
-    else if (s[i] >= 'A' && s[i] <= 'F')
-      hdata = hdata * 16 + (s[i] - 0x41 + 0x0a);
-    
-    i ++;
-  }
-  return hdata;
-}
-*/
-
 
 void HdcpEfuseReadAll()
 {
@@ -576,42 +474,43 @@ void HdcpEfuseProgramOneDWord(unsigned int dword_addr, unsigned int indata)
       unsigned int L_5=(data1>>24)&0x3f;  
       unsigned int L_6=((data1>>30)&0x3)+((data&0Xf)<<2);  //BIT[30],BIT[31]+0x78bit[3]-[0]
       unsigned int L_1_C=int_to_char(L_1);
-	unsigned int L_2_C=int_to_char(L_2);
-	unsigned int L_3_C=int_to_char(L_3);
-	unsigned int L_4_C=int_to_char(L_4);
-	unsigned int L_5_C=int_to_char(L_5);
-	unsigned int L_6_C=int_to_char(L_6);
-	printf("Lot id:%c%c%c%c%c%c\n",L_1_C,L_2_C,L_3_C,L_4_C,L_5_C,L_6_C);
+        unsigned int L_2_C=int_to_char(L_2);
+        unsigned int L_3_C=int_to_char(L_3);
+        unsigned int L_4_C=int_to_char(L_4);
+        unsigned int L_5_C=int_to_char(L_5);
+        unsigned int L_6_C=int_to_char(L_6);
+        printf("Lot id:%c%c%c%c%c%c\n",L_1_C,L_2_C,L_3_C,L_4_C,L_5_C,L_6_C);
 	
  }
- int int_to_char(unsigned int dataa){
+
+ int int_to_char(unsigned int data)
+ {
       int to_char;
-      if (dataa<=9){
-	  	to_char=dataa+48;
-		return to_char;
+        if (data<=9)
+        {
+	    to_char=data+48;
 	}
-	if(dataa>9){
-        to_char=dataa+55;
-		return to_char;
+	else
+        {
+            to_char=data+55;
 	}
+        return to_char;
  }
+
 void Usage()
 {
-        printf("Usage: Read or program CHX001 HDCP E-Fuse.\n");
-        
+        printf("Usage: Read or program CHX001 HDCP E-Fuse.\n");      
         printf("efuse -p -i addr       #prog 1bit at bit addr(HEX)(000 - FFF).\n");
         printf("efuse -p -b addr data  #prog 8bit at byte addr(HEX)(000 - 1FF).\n");
         printf("efuse -p -w addr data  #prog 32bit at dword addr(HEX)(00 - 7F).\n");
         printf("efuse -p -f file.bin -1.4   #prog all data from a hdcp 1.4 binary file.\n");
-		printf("efuse -p -f file.bin -2.2   #prog all data from a hdcp 2.2 binary file.\n");
-        
+	printf("efuse -p -f file.bin -2.2   #prog all data from a hdcp 2.2 binary file.\n");       
         printf("efuse -r -i addr       #read 1bit at bit addr(HEX)(000 - FFF).\n");
         printf("efuse -r -b addr       #read 8bit at byte addr(HEX)(000 - 1FF).\n");
         printf("efuse -r -w addr       #read 32bit at dword addr(HEX)(00 - 7F).\n");
-	    printf("efuse -r -s  -l             #read  efuse sidd value\n");
-        printf("efuse -r -f file.bin   #read all efuse into a binary file.\n");
-        
-        printf("efuse -v -f file.bin    #verify HDCP key section with a binary file.\n");
+	printf("efuse -r -s  -l        #read  efuse sidd value\n");
+        printf("efuse -r -f file.bin   #read all efuse into a binary file.\n");     
+        printf("efuse -v -f file.bin   #verify HDCP key section with a binary file.\n");
         printf("efuse -l  #lock hdcp efuse\n");
         printf("efuse -b  #hdcp efuse blank check\n");
 }
@@ -621,14 +520,10 @@ int efuse_test(int argc, char *argv[])
 {
         unsigned int i, j;
         unsigned int data;
-	    unsigned int data1;
+	unsigned int data1;
         unsigned int dwordaddr;
         unsigned int byteaddr;
         unsigned int bitaddr;
-
-        //g_mmiobase = GetMMIOBase();
-        //printf("MMIO Base Addr = %8.8x\n\n", g_mmiobase);
-        g_mmiobase= video_pci_prop.MmioBase;
 
         if(argc == 2)
         {
