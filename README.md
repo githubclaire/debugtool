@@ -54,6 +54,7 @@ Print all info(pcie info/mem info/vcore/clk/temp)
 ````
 print
 
+````
 efuse hdcp key 1.4/2.2 function;
 ````
 efuse
