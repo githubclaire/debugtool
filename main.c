@@ -108,7 +108,7 @@ int main(int argc, char *argv[])
 #ifdef __dos__
     video_pci_prop.mapped_mmioBase = video_pci_prop.MmioBase;
 #endif
-
+    
     CToolParserCmd();
 	return 1;
 }

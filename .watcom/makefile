@@ -19,15 +19,15 @@ WLINK_OPT=d all sys dos32a op m op maxe=25 op q op symf @$(PROJ).lk1
 ALL: $(EXECUTABLE)
 
 $(EXECUTABLE): $(OBJ)
-    @echo "Linking all obj..."
-    @%write $(PROJ).lk1
-    @%append $(PROJ).lk1
-    @$(WLINK) name $(PROJ) $(WLINK_OPT) File $(OUTPUTPATH)\*.obj
-    @if exist "$(OUTPUTPATH)\*.obj" del /q $(OUTPUTPATH)\*.obj > nul
-    @if exist "$(OUTPUTPATH)\*.err" del /q $(OUTPUTPATH)\*.err > nul
+	@echo "Linking all obj..."
+	@%write $(PROJ).lk1
+	@%append $(PROJ).lk1
+	@$(WLINK) name $(PROJ) $(WLINK_OPT) File $(OUTPUTPATH)\*.obj
+	@if exist "$(OUTPUTPATH)\*.obj" del /q $(OUTPUTPATH)\*.obj > nul
+	@if exist "$(OUTPUTPATH)\*.err" del /q $(OUTPUTPATH)\*.err > nul
 CLEAN:
-    @if exist "$(OUTPUTPATH)\$(PROJ).*" (del /q $(OUTPUTPATH)\$(PROJ).* > nul)
+	@if exist "$(OUTPUTPATH)\$(PROJ).*" (del /q $(OUTPUTPATH)\$(PROJ).* > nul)
 
 $(OBJ)
-    @$(CC) $(CC_OPT)  $(CODEPATH)\$*.c
-    @echo $*.c
+	@$(CC) $(CC_OPT)  $(CODEPATH)\$*.c
+	@echo $*.c
