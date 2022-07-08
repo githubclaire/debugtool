@@ -258,8 +258,6 @@ void helpinfo(void)
 	printf("  efuse      --- efuse hdcp key1.4/2.2 function\n");
 }
 
-
-
 char GetKey(void)
 {
 	char key;  

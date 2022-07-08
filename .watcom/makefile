@@ -14,7 +14,7 @@ EXECUTABLE = $(PROJ).exe
 CC_OPT=-w4 -e25 -zq -od -d2 -6r -bt=dos -mf -fo=$(OUTPUTPATH)\$*.obj
 
 LINK_OPT=-nologo -out:$@
-WLINK_OPT=d all sys dos32a op m op maxe=25 op q op symf @$(PROJ).lk1 
+WLINK_OPT=d all sys dos32a op m op maxe=25 op q op symf @$(PROJ).lk1
 
 ALL: $(EXECUTABLE)
 

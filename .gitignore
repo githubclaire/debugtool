@@ -9,4 +9,5 @@
 *.sym
 *.lk1
 /.vscode
-glenfly_tool_debug
+/.watcom/glendbg.exe
+glenfly_tool_debug.exe

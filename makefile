@@ -16,7 +16,7 @@ CFLAGS = -Wall
 LDFLAGS = -lz -ludev -lpci
 
 COBJS = main.o cmd.o pcie.o share.o common.o clk.o ini.o md5.o  spi_flash.o flash.o ts.o memtest.o 
-COBJS += i2c.o
+COBJS += i2c.o reconfig.o
 OBJS = $(addprefix $(OBJTREE),$(COBJS))
 
 EXECUTABLE := glenfly_tool_debug.exe

@@ -38,5 +38,5 @@ int do_dbg_efuse_test(char * cmd[], unsigned int param_count);
 void CToolParserCmd(void);
 int ProcessString(char* buffer);
 void helpinfo(void);
-unsigned char GetKey(void);
+char GetKey(void);
 #endif

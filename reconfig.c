@@ -1,9 +1,4 @@
-#include <conio.h>
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
-#include <stdlib.h>
-#include "common.h"
+
 #include "def.h"
 
 FILE *in_file,*out_file,*pFile,*fw;
