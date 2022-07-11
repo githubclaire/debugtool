@@ -21,8 +21,8 @@
 #include <i86.h>
 #include <dos.h>
 #include <bios.h>
-#include <sys\types.h>
-#include <sys\stat.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <conio.h>
 #endif
 

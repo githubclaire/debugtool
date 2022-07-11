@@ -8,6 +8,10 @@
 *.mk1
 *.sym
 *.lk1
+/.deps
+/.objs
 /.vscode
-/.watcom/glendbg.exe
+./.watcom/glendbg.exe
 glenfly_tool_debug.exe
+glendbg.exe
+
