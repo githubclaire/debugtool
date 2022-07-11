@@ -53,3 +53,78 @@ jobs:
             glendbg.tar.gz
             build_linux.log
             build_dos.log
+      
+
+  send:
+    name: Send mail
+    if: ${{ false }}  # disable for now
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Download glendbg
+        uses: actions/download-artifact@v3
+        with:
+          name: glendbg
+          path: ./
+      - name: Get build log
+        uses: mkungla/actions-set-text-output@v1
+        id: get-build-log
+        with:
+          text: $(cat build.log)
+      - name: Send mail
+        uses: dawidd6/action-send-mail@v3
+        with:
+          # Required mail server address:
+          server_address: smtp.gmail.com
+          # Required mail server port:
+          server_port: 465
+          # Optional (recommended): mail server username:
+          username: ${{secrets.MAIL_USERNAME}}
+          # Optional (recommended) mail server password:
+          password: ${{secrets.MAIL_PASSWORD}}
+          # Required mail subject:
+          subject: Build Glenfly debug tool
+          # Required recipients' addresses:
+          to: ${{secrets.MAIL_RECEIVER}}
+          # Required sender full name (address can be skipped):
+          from: Claie Yu # <user@example.com>
+          # Optional whether this connection use TLS (default is true if server_port is 465)
+          secure: true
+          # Optional plain body:
+          body: |
+            ## Build Done
+            
+            - Repo: ${{ github.repository }}
+            
+            ## Version
+            
+            - Commit: ${{ github.sha }}
+            - Ref: ${{ github.ref_type }} - ${{ github.ref_name }}
+            
+            ---
+            
+            ## Build Log
+            
+            ```
+            ${{ steps.get-build-log.outputs.value }}
+            ```
+            
+            -
+          # Optional HTML body read from file:
+          # html_body: file://README.html
+          # Optional carbon copy recipients:
+          # cc: kyloren@example.com,leia@example.com
+          # Optional blind carbon copy recipients:
+          # bcc: r2d2@example.com,hansolo@example.com
+          # Optional recipient of the email response:
+          # reply_to: luke@example.com
+          # Optional Message ID this message is replying to:
+          # in_reply_to: <random-luke@example.com>
+          # Optional unsigned/invalid certificates allowance:
+          ignore_cert: true
+          # Optional converting Markdown to HTML (set content_type to text/html too):
+          convert_markdown: true
+          # Optional attachments:
+          attachments: glendbg.tar.gz
+          # Optional priority: 'high', 'normal' (default) or 'low'
+          priority: low
