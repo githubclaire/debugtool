@@ -87,11 +87,18 @@ int main(int argc, char *argv[])
             printf("Load chip id : vendorid = 0x%x, deviceid = 0x%x\n", config.id.vendorid, config.id.deviceid);
             break;
         }
+        else if(!no_config_file)
+        {
+            printf("Can't find device in PCIE!\n", config.id.vendorid, config.id.deviceid);  
+            printf("Load mmiobase from file: mmiobase = 0x%lx\n", config.addr.mmiobase); 
+            video_pci_prop.MmioBase = config.addr.mmiobase;  
+        }
+
         if(id_index==1)
         {
             //load mmio base from config.ini
             printf("Can't read mmio base address from pcie.\n");
-            printf("Load base address from file: mmiobase = 0x%lx\n", config.addr.mmiobase);
+            printf("Load default base address: mmiobase = 0x%lx\n", config.addr.mmiobase);
             video_pci_prop.MmioBase = config.addr.mmiobase;
         }
         config.id.deviceid++;
