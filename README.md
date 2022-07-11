@@ -1,5 +1,26 @@
 # debugtool
 
+# Build dos tool in windows
+open cmd and change path to .watcom, run batch file build.bat
+````
+build all
+````
+# Build dos tool with docker in windows
+````
+docker pull dockerhy/watcom-docker
+````
+````
+docker run --rm -v %cd%:/usr/src/myapp -w /usr/src/myapp dockerhy/watcom-docker wmake -f makefile_watcom
+````
+# Build linux tool with docker in windows
+ ````
+docker pull dockerhy/watcom-docker
+````
+````
+docker run --rm -v %cd%:/usr/src/myapp -w /usr/src/myapp dockerhy/linux-dbg make
+````
+
+# Tool Usage
 print help info
 ````
 help/?
