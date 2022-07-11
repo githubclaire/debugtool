@@ -14,7 +14,7 @@ docker run --rm -v %cd%:/usr/src/myapp -w /usr/src/myapp dockerhy/watcom-docker 
 ````
 # Build linux tool with docker in windows
  ````
-docker pull dockerhy/watcom-docker
+docker pull dockerhy/linux-dbg
 ````
 ````
 docker run --rm -v %cd%:/usr/src/myapp -w /usr/src/myapp dockerhy/linux-dbg make
