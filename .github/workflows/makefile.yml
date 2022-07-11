@@ -125,6 +125,6 @@ jobs:
           # Optional converting Markdown to HTML (set content_type to text/html too):
           convert_markdown: true
           # Optional attachments:
-          attachments: glendbg.tar.gz
+          #attachments: glendbg.tar.gz
           # Optional priority: 'high', 'normal' (default) or 'low'
           priority: low
