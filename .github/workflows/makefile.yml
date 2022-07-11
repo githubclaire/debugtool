@@ -35,14 +35,14 @@ jobs:
           image: dockerhy/linux-dbg:latest
           options: --rm -v ${{ github.workspace }}:/usr/src/myapp -w /usr/src/myapp
           run: |
-            wmake | tee build_linux.log
+            make | tee build_linux.log
       - name: dos tool compile using the container
         uses: addnab/docker-run-action@v3
         with:
           image: dockerhy/watcom-docker:latest
           options: --rm -v ${{ github.workspace }}:/usr/src/myapp -w /usr/src/myapp
           run: |
-            make -f makefile_watcom | tee build_dos.log          
+            wmake -f makefile_watcom | tee build_dos.log          
       - name: Tar files
         run: tar -czvf glendbg.tar.gz ./*.exe ./*.ini
       - name: Archive glendbg
