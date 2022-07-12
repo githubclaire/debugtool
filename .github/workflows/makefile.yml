@@ -90,9 +90,9 @@ jobs:
           # Required recipients' addresses:
           to: ${{secrets.MAIL_RECEIVER}}
           # Required sender full name (address can be skipped):
-          from: Claire Yu # <user@example.com>
+          from: Claire Yu <claireyu@glenfly.com>
           # Optional whether this connection use TLS (default is true if server_port is 465)
-          cc: "cheerychen@glenfly.com"
+          #cc: "cheerychen@glenfly.com"
           secure: true
           # Optional plain body:
           body: |
@@ -124,6 +124,5 @@ jobs:
           convert_markdown: true
           # Optional attachments:
           attachments: glenfly_tool_debug.tar.gz
-          #attachments: glendbg.tar.gz
           # Optional priority: 'high', 'normal' (default) or 'low'
           priority: low
