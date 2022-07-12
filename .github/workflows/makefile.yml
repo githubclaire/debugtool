@@ -74,11 +74,6 @@ jobs:
         with:
           name: glenfly_tool_debug
           path: ./
-      - name: Get build log
-        uses: mkungla/actions-set-text-output@v1
-        id: get-build-log
-        with:
-          text: $(cat build_linux.log)
       - name: Send mail
         uses: dawidd6/action-send-mail@v3
         with:
@@ -97,6 +92,7 @@ jobs:
           # Required sender full name (address can be skipped):
           from: Claie Yu # <user@example.com>
           # Optional whether this connection use TLS (default is true if server_port is 465)
+          cc:"cheerychen@glenfly.com"
           secure: true
           # Optional plain body:
           body: |
@@ -110,13 +106,7 @@ jobs:
             - Ref: ${{ github.ref_type }} - ${{ github.ref_name }}
             
             ---
-            
-            ## Build Log
-            
-            ```
-            ${{ steps.get-build-log.outputs.value }}
-            ```
-            
+                        
             -
           # Optional HTML body read from file:
           # html_body: file://README.html
