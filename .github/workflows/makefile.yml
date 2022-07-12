@@ -90,9 +90,9 @@ jobs:
           # Required recipients' addresses:
           to: ${{secrets.MAIL_RECEIVER}}
           # Required sender full name (address can be skipped):
-          from: Claie Yu # <user@example.com>
+          from: Claire Yu # <user@example.com>
           # Optional whether this connection use TLS (default is true if server_port is 465)
-          cc:"cheerychen@glenfly.com"
+          cc: "cheerychen@glenfly.com"
           secure: true
           # Optional plain body:
           body: |
