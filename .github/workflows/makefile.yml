@@ -134,5 +134,6 @@ jobs:
           convert_markdown: true
           # Optional attachments:
           attachments: glenfly_tool_debug.tar.gz
+          #attachments: glendbg.tar.gz
           # Optional priority: 'high', 'normal' (default) or 'low'
           priority: low
