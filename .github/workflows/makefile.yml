@@ -63,13 +63,6 @@ jobs:
             build_linux.log
 
 
-  tag:
-    name: get tag
-    id: tag
-    uses: dawidd6/action-get-tag@v1
-    needs: build
-    steps: 
-
 
   send:
     name: Send mail
