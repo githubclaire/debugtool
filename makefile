@@ -19,7 +19,7 @@ COBJS = main.o cmd.o pcie.o share.o common.o clk.o ini.o md5.o  spi_flash.o flas
 COBJS += i2c.o reconfig.o
 OBJS = $(addprefix $(OBJTREE),$(COBJS))
 
-EXECUTABLE := glenfly_tool_debug.exe
+EXECUTABLE := glenfly_tool_debug
 
 DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.Td
 POSTCOMPILE = mv -f $(DEPDIR)/$*.Td $(DEPDIR)/$*.d && touch $@

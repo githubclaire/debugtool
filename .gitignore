@@ -11,7 +11,7 @@
 /.deps
 /.objs
 /.vscode
-./.watcom/glendbg.exe
-glenfly_tool_debug.exe
+/.watcom/glendbg.exe
 glendbg.exe
-
+glenfly_tool_debug.exe
+glenfly_tool_debug
