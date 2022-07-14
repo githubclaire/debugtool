@@ -74,3 +74,7 @@ i2c index addr subaddr data
 Print all info(pcie info/mem info/vcore/clk/temp)
 ````
 print
+
+efuse 
+````
+efuse hdcp 1.4/2.2 key -dos
