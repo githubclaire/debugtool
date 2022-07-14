@@ -11,7 +11,7 @@ OBJ = clk.obj cmd.obj common.obj flash.obj i2c.obj ini.obj main.obj
 OBJ += md5.obj memtest.obj pcie.obj share.obj spi_flash.obj ts.obj efuse.obj cts.obj
 
 LOBJ = clk.obj, cmd.obj, common.obj, flash.obj, i2c.obj, ini.obj, main.obj,
-LOBJ += md5.obj, memtest.obj, pcie.obj, share.obj, spi_flash.obj, ts.obj, efuse.obj cts.obj
+LOBJ += md5.obj, memtest.obj, pcie.obj, share.obj, spi_flash.obj, ts.obj, efuse.obj, cts.obj
 
 
 PROJ = glendbg
