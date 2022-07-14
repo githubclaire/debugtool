@@ -19,6 +19,7 @@ DBG_CMD_STRUCT dbg_cmd_table[] = {
 	{"i2c", do_dbg_i2c_test},
 	{"dp", do_dbg_dp_test},	
 	{"efuse", do_dbg_efuse_test},
+	{"ct", do_dbg_cts_test},
 
 };
 
@@ -134,7 +135,27 @@ int do_dbg_voltage(char * cmd[], unsigned int param_count)
 
 int do_dbg_print_info(char * cmd[], unsigned int param_count)
 {
-    sf_init();
+    if(video_pci_prop.VenderId==0x6766 && video_pci_prop.DeviceId==0x3d02) 
+    {
+
+         printf("Technology : 28 nm\n");
+         printf("Die Size : 322 mm*mm\n");
+         printf("Transistors : 445 M\n");
+         printf("ROPS/TMUS : 16/32\n");
+         printf("Shaders : 256 Unified\n");
+         printf("DirectX Support : 11.0\n");      
+    }                                        
+    if(video_pci_prop.VenderId==0x6766 && video_pci_prop.DeviceId==0x3d00)  
+    {
+
+         printf("Technology : 28 nm\n");
+         printf("Die Size : 322 mm*mm\n");
+         printf("Transistors : 445 M\n");
+         printf("ROPS/TMUS : 96/192\n");
+         printf("Shaders : 1536 Unified\n");
+         printf("DirectX Support : 11.0\n");                                            
+    }
+	sf_init();
     read_fw_version();
     read_PCIe();
     printf("DDR Version : DDR4\n");
@@ -142,7 +163,8 @@ int do_dbg_print_info(char * cmd[], unsigned int param_count)
     printf("Memory Clk : %d MHz\n",get_mpll());
     printf("Elite Clk : %d MHz\n",get_vepll(EPLL_REG));   
     printf("Temp : %d C\n",dout_to_temp(GetTemperature())/1000);
-    printf("voltage : %d mV\n",( GetVoltage()*1000+1157200)/1869);     
+    printf("voltage : %d mV\n",( GetVoltage()*1000+1157200)/1869); 
+	printf("FAN1 Speed:%d RPM\n",get_fs_speed(1));    
 	return true;
 }
 
@@ -173,6 +195,11 @@ int do_dbg_efuse_test(char * cmd[], unsigned int param_count)
 int do_dbg_dp_test(char * cmd[], unsigned int param_count)
 {
     chip_mem_connection_test(param_count,cmd);
+	return TRUE;
+}
+int do_dbg_cts_test(char * cmd[], unsigned int param_count)
+{
+    cts_test(param_count,cmd);
 	return TRUE;
 }
 
@@ -254,8 +281,9 @@ void helpinfo(void)
     printf("  dump       --- dump data from flash saved to file\n");	
     printf("  mmio       --- read/write register\n");  
     printf("  i2c        --- i2c read/write data\n"); 	
-    printf("  print      --- print all information(pcie info/mem info/vcore/clk/temp)\n");
+    printf("  print      --- print all information(pcie info/mem info/vcore/clk/temp/fs)\n");
 	printf("  efuse      --- efuse hdcp key1.4/2.2 function\n");
+	printf("  ct         --- only for linux; need uma and test graphics card\n");
 }
 
 char GetKey(void)

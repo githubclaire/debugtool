@@ -53,6 +53,8 @@
 #include "memtest.h"
 #include "ini.h"
 #include "i2c.h"
-#include "reconfig.h"
+#include "efuse.h"
+#include "fs.h"
+#include "cts.h"
 
 #endif
