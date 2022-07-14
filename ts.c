@@ -83,5 +83,21 @@ int dout_to_temp(int val)
 	temp = a+b-44596;
 	return temp;
 } 
+unsigned int get_fs_speed(unsigned char index)
+{
+    //volatile Reg_Fs* pRegFs[2] = {(volatile Reg_Fs *)(video_pci_prop.MmioBase + FS0_BASE),(volatile Reg_Fs *)(video_pci_prop.MmioBase + FS1_BASE)};
+	volatile Reg_Fs* pRegFs[2]={0x0};
+	pRegFs[0]=(volatile Reg_Fs *)(video_pci_prop.mapped_mmioBase + FS0_BASE);
+	pRegFs[1]=(volatile Reg_Fs *)(video_pci_prop.mapped_mmioBase+ FS1_BASE);
+	pRegFs[index]->status_clr.complete = 1;
+	pRegFs[index]->status_clr.time_out = 1;
+	pRegFs[index]->ctrl.fs_clr = 1;
+	pRegFs[index]->ctrl.fs_en = 1;
+	while(pRegFs[index]->status.complete == 0 && pRegFs[index]->status.time_out == 0);
+	if(pRegFs[index]->status.time_out){
+		return 0;
+	}
+	return 16000*60/pRegFs[index]->period_cnt_val;
+}
 
 
