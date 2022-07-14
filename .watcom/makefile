@@ -1,5 +1,6 @@
 
 OUTPUTPATH=$(CODEPATH)\.watcom
+INCLUDEPATH=$(WATCOM)
 
 CC=wcc386
 LINK=link
@@ -11,7 +12,7 @@ OBJ += md5.obj memtest.obj pcie.obj share.obj spi_flash.obj ts.obj efuse.obj cts
 PROJ = glendbg
 EXECUTABLE = $(PROJ).exe
 
-CC_OPT=-w4 -e25 -zq -od -d2 -6r -bt=dos -mf -fo=$(OUTPUTPATH)\$*.obj
+CC_OPT=-w4 -e25 -zq -od -d2 -6r -bt=dos -mf -i=$(INCLUDEPATH)\h -fo=$(OUTPUTPATH)\$*.obj
 
 LINK_OPT=-nologo -out:$@
 WLINK_OPT=d all sys dos32a op m op maxe=25 op q op symf @$(PROJ).lk1
