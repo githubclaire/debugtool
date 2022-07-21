@@ -266,21 +266,6 @@ void wait_pll_ok(PLL_LOCK pll)
     } while ((val & (1 << pll)) != (1 << pll));
 }
 
-int log2(unsigned int val)
-{
-    int i = 0;
-    while (val > 1)
-    {
-        val >>= 1;
-        i++;
-        if (i > 8)
-        {
-            return -1;
-        }
-    }
-    return i;
-}
-
 int fclk_test(int fclk)
 {
     int fclk_cal_test;
@@ -301,7 +286,7 @@ int fclk_test(int fclk)
     {
         bandNo = 1;
     }
-    OD = log2((unsigned int)(maxVCO[bandNo] / fclk));
+    OD = mathlog2((unsigned int)(maxVCO[bandNo] / fclk));
     if (OD > 3)
         OD = 3;
     M = ((fclk << OD) / reference_freq) - 2;

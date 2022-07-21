@@ -1,24 +1,20 @@
 #ifndef __SHARE_H__
 #define __SHARE_H__
 
-#define KEY_ESC                     (0x1B)
-#define KEY_BACKSPACE               (0x08)
-
-//#ifdef __ubuntu__
-#define KEY_ENTER                   (0x0A)
-/*#endif
-#ifdef __dos__
-#define KEY_ENTER                   (0x0D)
-#endif*/
-
-#define KEY_BOTTOMLINE              (95)
-#define KEY_SPACE                   (32)
-#define KEY_UP_DOWN_PRE             (0)
-#define KEY_UP                      (72)
-#define KEY_DOWN                    (80) 
-#define KEY_LEFT                    (75)
-#define KEY_RIGHT                   (77)
 #define  HISTORY_STRING_NUM     10
+
+#define   REG_KEY_ENTER      0x0D
+#define   REG_KEY_BACKSPACE  0x08
+#define   REG_KEY_DELETE     0x7F
+#define   REG_KEY_SPACE      0x20
+#define   REG_KEY_TAB        0x09
+#define   COMB_KEY_START     0x1B
+#define   REG_KEY_UP         0x48
+#define   REG_KEY_DOWN       0x50
+#define   REG_KEY_RIGHT      0x4D
+#define   REG_KEY_LEFT       0x4B
+#define   REG_KEY_OTHER      0x1
+#define   COMB_KEY_DOS_START 0x0
 
 #define   INVALID_CMD_POINTER   (0xFFFFFFFF)
 
@@ -45,6 +41,7 @@ typedef unsigned long       DWORD, *PDWORD;
 #define CTOOL_REGISTER_CLK_READWRITE         0x82
 #define CTOOL_REGISTER_AUX_READWRITE         0x83
 
+#define ECHOFLAGS (ECHO | ECHOE | ECHOK | ECHONL)
 typedef struct _CTOOL_HISTORY_CMD
 {
     char*                chCmdHistory[HISTORY_STRING_NUM];
@@ -53,8 +50,8 @@ typedef struct _CTOOL_HISTORY_CMD
 }CTOOL_HISTORY_CMD, *PCTOOL_HISTORY_CMD;
 
 void EchoWait(void);
-void  CToolClearHisCmd(void);
-void CToolGetInput(char* buffer, unsigned int size);
+void  clear_his_cmd(void);
+void CToolGetInput(char* buffer, int size);
 #endif
 
 

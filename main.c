@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
         }
         else if(!no_config_file)
         {
-            printf("Can't find device in PCIE!\n", config.id.vendorid, config.id.deviceid);  
+            printf("Can't find device in PCIE!\n");  
             printf("Load mmiobase from file: mmiobase = 0x%lx\n", config.addr.mmiobase); 
             video_pci_prop.MmioBase = config.addr.mmiobase;  
         }

@@ -5,13 +5,12 @@
 CTOOL_HISTORY_CMD     CToolHisCmd;
 
 
-char*  CToolGetCmdFromHis(bool bUp)
+char*  get_cmd_from_his(bool bUp)
 {
     PCTOOL_HISTORY_CMD    pHisCmd = &CToolHisCmd;
     char*    pCmd = 0;
     if(pHisCmd->dwTotalCmd && bUp)
-    {
-        
+    {    
         if(pHisCmd->dwCurCmd == INVALID_CMD_POINTER)
         {
             pHisCmd->dwCurCmd  = pHisCmd->dwTotalCmd - 1;
@@ -38,13 +37,13 @@ char*  CToolGetCmdFromHis(bool bUp)
     return pCmd;
 }
 
-void CToolResetHisCmdCur(void)
+void reset_his_cmd(void)
 {
     PCTOOL_HISTORY_CMD    pHisCmd = &CToolHisCmd;
     pHisCmd->dwCurCmd = INVALID_CMD_POINTER;
 }
 
-char*  CToolGetLastCmd(void)
+char*  get_last_cmd(void)
 {
     PCTOOL_HISTORY_CMD    pHisCmd = &CToolHisCmd;
     char*    pCmd = NULL;
@@ -56,8 +55,7 @@ char*  CToolGetLastCmd(void)
     return pCmd;
 }
 
-
-void  CToolAddCmdToHistory(char*  chCmd)
+void  add_cmd_to_history(char*  chCmd)
 {
     PCTOOL_HISTORY_CMD    pHisCmd = &CToolHisCmd;
     if(pHisCmd->dwTotalCmd < HISTORY_STRING_NUM)
@@ -85,30 +83,114 @@ void  CToolAddCmdToHistory(char*  chCmd)
     }
 }
 
-void CToolGetInput(char* buffer, unsigned int size)
+#ifdef __ubuntu__
+//func getch definition
+//linux: no func getch def
+//dos: func getch def in <conio.h>
+char getch(void)
 {
-    DWORD i, j;
-    char ch = 0;
-    //char*    chLastCmd = NULL;
+    struct termios tmtemp,tm;
+    char c;
+    int fd=0;
+
+    if(tcgetattr(fd,&tm) != 0) //get current terminal attribution, save to the struct tm
+    {      
+        return -1;
+    }
+
+    tmtemp=tm;
+    cfmakeraw(&tmtemp);     //initial tetemp to the attribution in raw mode
+    if(tcsetattr(fd,TCSANOW,&tmtemp) != 0) //set terminal attribution to raw mode
+    {     
+        return -1;
+    }
+    c=getchar();
+    if(tcsetattr(fd,TCSANOW,&tm) != 0) //set terminal attrbution to original
+    {      
+        return 0;
+    }
+    return c;
+}
+
+void reg_get_comb_key(char* pch)
+{
+    //int comb_key = COMB_KEY_DOS_START;
+    char ch = getch();
+    *pch = '\0';
+
+    if(ch == COMB_KEY_START)
+    {
+        char  ch1, ch2;
+        ch1 = getch();
+        ch2 = getch();
+
+        if(ch1 == 91)
+        {
+            switch(ch2)
+            {
+            case  51:  //delete key  is 27 91 51 126
+                ch1 = getc(stdin);
+                *pch = REG_KEY_BACKSPACE;
+                break;
+            case  65:
+                *pch = REG_KEY_UP;
+                break;
+            case 66:
+                *pch = REG_KEY_DOWN;
+                break;
+            case 67:
+                *pch = REG_KEY_RIGHT;
+                break;
+            case 68:
+                *pch = REG_KEY_LEFT;
+                break;
+            default:
+                break;
+            }
+        }
+        else
+        {
+            *pch = REG_KEY_OTHER;
+        }
+    }
+    else
+    {
+        *pch = ch;
+    }
+    //return  comb_key;
+}
+#endif
+
+void CToolGetInput(char* buffer, int size)
+{
+    int  i, j;   // i is num of input char, j is current pos of cursor
+    char  ch = 0;
     char*      chTemp    = NULL;
-    bool      bInputValid = FALSE;
-    bool      bUserInput = FALSE;
+    int      bInputValid = 0;
+    int      bUserInput = 0;
 
     j = i = 0;
-    do{
-        ch = getchar();
 
-        if((ch != KEY_ENTER) && (ch != KEY_BACKSPACE))
+    do{
+        #ifdef __ubuntu__
+        reg_get_comb_key(&ch);
+        #endif
+        #ifdef __dos__
+        ch = getch();  
+        //printf("%d",ch);   
+        if(ch == COMB_KEY_DOS_START)
         {
-            if(ch == KEY_UP_DOWN_PRE)
+            ch = getch();
+            //printf("%d",ch);
+        } 
+        #endif
+
+        if(ch != REG_KEY_ENTER)
+        {
+            if(ch == REG_KEY_UP)
             {
-                mdelay(300);
-                continue;
-            }
-            if(ch == KEY_UP)
-            {
-                //printf("key up excution\n");
-                chTemp = CToolGetCmdFromHis(TRUE);
+                chTemp = get_cmd_from_his(TRUE);
+                //printf("cmd is %s\n",chTemp);
                 if(chTemp != NULL)
                 {
                     bUserInput = FALSE;
@@ -118,13 +200,15 @@ void CToolGetInput(char* buffer, unsigned int size)
                         {
                             printf("%s", &buffer[j]);
                         }
+
                         while(i > 0)
                         {
-                            printf("%c", KEY_BACKSPACE);
-                            printf("%c", KEY_SPACE);
-                            printf("%c", KEY_BACKSPACE);
+                            printf("%c", REG_KEY_BACKSPACE);
+                            printf("%c", REG_KEY_SPACE);
+                            printf("%c", REG_KEY_BACKSPACE);
                             i--;
                         }
+
                         strcpy(buffer, chTemp);
                         i = strlen(chTemp);
                         printf("%s", chTemp);
@@ -133,10 +217,9 @@ void CToolGetInput(char* buffer, unsigned int size)
                     }
                 }
             }
-            else if(ch == KEY_DOWN)
+            else if(ch == REG_KEY_DOWN)
             {
-                //printf("key down excution\n");
-                chTemp = CToolGetCmdFromHis(FALSE);
+                chTemp = get_cmd_from_his(FALSE);
                 if(chTemp != NULL)
                 {
                     bUserInput = FALSE;
@@ -146,13 +229,15 @@ void CToolGetInput(char* buffer, unsigned int size)
                         {
                             printf("%s", &buffer[j]);
                         }
+
                         while(i > 0)
                         {
-                            printf("%c", KEY_BACKSPACE);
-                            printf("%c", KEY_SPACE);
-                            printf("%c", KEY_BACKSPACE);
+                            printf("%c", REG_KEY_BACKSPACE);
+                            printf("%c", REG_KEY_SPACE);
+                            printf("%c", REG_KEY_BACKSPACE);
                             i--;
                         }
+
                         strcpy(buffer, chTemp);
                         i = strlen(chTemp);
                         printf("%s", chTemp);
@@ -168,11 +253,12 @@ void CToolGetInput(char* buffer, unsigned int size)
                         {
                             printf("%s", &buffer[j]);
                         }
+
                         while(i > 0)
                         {
-                            printf("%c", KEY_BACKSPACE);
-                            printf("%c", KEY_SPACE);
-                            printf("%c", KEY_BACKSPACE);
+                            printf("%c", REG_KEY_BACKSPACE);
+                            printf("%c", REG_KEY_SPACE);
+                            printf("%c", REG_KEY_BACKSPACE);
                             i--;
                         }
                         fflush(stdout);
@@ -181,16 +267,16 @@ void CToolGetInput(char* buffer, unsigned int size)
                     }
                 }
             }
-            else if(ch == KEY_LEFT)
+            else if(ch == REG_KEY_LEFT)
             {
                 if(j > 0)
                 {
-                    printf("%c", KEY_BACKSPACE);
+                    printf("%c", REG_KEY_BACKSPACE);
                     j--;
                 }
                 fflush(stdout);
             }
-            else if(ch == KEY_RIGHT)
+            else if(ch == REG_KEY_RIGHT)
             {
                 if(j < i)
                 {
@@ -199,83 +285,94 @@ void CToolGetInput(char* buffer, unsigned int size)
                 }
                 fflush(stdout);
             }
+            else if((ch == REG_KEY_BACKSPACE)||(ch == REG_KEY_DELETE))
+            {
+                if(j > 0)
+                {
+                    int  dwTemp = --j;
+                    while(dwTemp < i - 1)
+                    {
+
+                        buffer[dwTemp] = buffer[dwTemp + 1];
+                        dwTemp++;
+                    }
+
+                    buffer[--i] = '\0';
+                    printf("%c", REG_KEY_BACKSPACE);
+                    printf("%s", &buffer[j]);
+                    printf("%c", REG_KEY_SPACE);
+                    printf("%c", REG_KEY_BACKSPACE);
+                    dwTemp = i - j;
+
+                    while(dwTemp > 0)
+                    {
+                        printf("%c", REG_KEY_BACKSPACE);
+                        dwTemp--;
+                    }
+                    fflush(stdout);
+                }
+            }
             else
             {
-                DWORD  dwTemp = i;                
-                CToolResetHisCmdCur();
+                int  dwTemp = i;                
+                reset_his_cmd();
 
                 while(dwTemp > j)
                 {
                     buffer[dwTemp] = buffer[dwTemp - 1];
                     dwTemp--;
                 }
+
                 buffer[j] = ch;
                 buffer[++i] = '\0';
-                j++;
-                //printf("%s", &buffer[j++]);
+                printf("%s", &buffer[j++]);
                 dwTemp = i - j;
+
                 while(dwTemp > 0)
                 {
-                    printf("%c", KEY_BACKSPACE);
+                    printf("%c", REG_KEY_BACKSPACE);
                     dwTemp--;
                 }
                 fflush(stdout);
 
-                if(i > size - 1)
+                if(i >= size - 1)
                 {
                     printf("Input buffer overflow!\n");
+                    break;
                 }
-                bUserInput = TRUE;
-            }
-        }
-        else if(ch == KEY_BACKSPACE)
-        {
-            if(j > 0)
-            {
-                DWORD  dwTemp = --j;
-                while(dwTemp < i - 1)
-                {
-                    buffer[dwTemp] = buffer[dwTemp + 1];
-                    dwTemp++;
-                }
-                buffer[--i] = '\0';
-                printf("%c", KEY_BACKSPACE);
-                printf("%s", &buffer[j]);
-                printf("%c", KEY_SPACE);
-                printf("%c", KEY_BACKSPACE);
-                dwTemp = i - j;
-                while(dwTemp > 0)
-                {
-                    printf("%c", KEY_BACKSPACE);
-                    dwTemp--;
-                }
-                fflush(stdout);
-            }
-        }
 
-    }while(ch != KEY_ENTER);
+                bUserInput = TRUE;
+            }  
+        }        
+    }while(ch != REG_KEY_ENTER);
     buffer[i] = '\0';
     printf("\n");
 
     bInputValid = (strlen(buffer) == 0)?FALSE:TRUE;
-    chTemp = CToolGetLastCmd();
-    
+    chTemp = get_last_cmd();
+
     if(bInputValid && chTemp)
     {
         if(strcmp(chTemp, buffer) !=0)
         {
-            CToolAddCmdToHistory(buffer);
+            add_cmd_to_history(buffer);
         }
     }
     else if(bInputValid && !chTemp)
     {
-        CToolAddCmdToHistory(buffer);
+        add_cmd_to_history(buffer);
     }
-    
-    CToolResetHisCmdCur();
 
+/*
+    for(i=0;i<CToolHisCmd.dwTotalCmd;i++)
+    {
+        printf("his cmd is %s\n", CToolHisCmd.chCmdHistory[i]);
+    }
+*/
+    reset_his_cmd();
     return;
 }
+
 
 DWORD  CToolGetLastBit(DWORD  value)
 {
@@ -306,7 +403,7 @@ void EchoWait(void)
     fflush(stdout);
 }
 
-void  CToolClearHisCmd(void)
+void  clear_his_cmd(void)
 {
     PCTOOL_HISTORY_CMD    pHisCmd = &CToolHisCmd;
     if(!pHisCmd->dwTotalCmd)
