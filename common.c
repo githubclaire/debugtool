@@ -236,15 +236,15 @@ void WriteMMIO(unsigned int addr,unsigned int value,int size)
 	switch(size)
 	{
 		case S3X_BYTE:
-			*(unsigned char*)(video_pci_prop.MmioBase + addr) = (unsigned char)(value&0xFF);
+			*(unsigned char*)(video_pci_prop.mapped_mmioBase + addr) = (unsigned char)(value&0xFF);
 			break;
 			
 		case S3X_WORD:
-			*(unsigned short*)(video_pci_prop.MmioBase+addr) = (unsigned short)(value&0xFFFF);
+			*(unsigned short*)(video_pci_prop.mapped_mmioBase+addr) = (unsigned short)(value&0xFFFF);
 			break;
 			
 		case S3X_DWORD:
-			*(unsigned int*)(video_pci_prop.MmioBase+addr) = value;
+			*(unsigned int*)(video_pci_prop.mapped_mmioBase+addr) = value;
 	}
 }
 

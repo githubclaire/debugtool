@@ -10,12 +10,12 @@
 
 typedef struct _VIDEO_PCI_PROP
 {
-    unsigned short	VenderId;
-    unsigned short	DeviceId;
+    unsigned int	VenderId;
+    unsigned int	DeviceId;
 
-    unsigned short	BusNum;
-    unsigned short	DevNum;
-    unsigned short	FuncNum;
+    unsigned int	BusNum;
+    unsigned int	DevNum;
+    unsigned int	FuncNum;
 
     unsigned int	MmioBase;
     unsigned int	FBBase;

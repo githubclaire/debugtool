@@ -23,12 +23,31 @@ void sf_exit(unsigned char extcode)
 	exit(extcode);
 }
  
+/*
+void writel(unsigned long val,unsigned long Addr)
+{
+	int i;
+	for(i=0;i<4;i++)
+	{
+		//printf("%d\n",i);
+		writeb(val,Addr);
+		val = val>>8;
+		Addr++;
+	}
+}
+
+*/
 // get sf base address
 void sf_init(void)
 {
-	SF_BASE_ADDR = video_pci_prop.mapped_mmioBase;
+	//printf("Sf_init is now\n");
+       SF_BASE_ADDR = video_pci_prop.mapped_mmioBase;
+       //printf("Sf_init is now2\n");
+       //printf("SF_BASE_ADDR is 0x%lx\n",SF_BASE_ADDR);
 	//enable GPIO_ST(Pad input) for sclk pad
-	writel(0x80,SF_BASE_ADDR+0xa0024);
+	 writel(0x80,(video_pci_prop.mapped_mmioBase+0xa0024));
+       //WriteMMIO(0xa0024,0x80,S3X_BYTE);
+       //printf("SF_BASE_ADDR is 0x%lx\n",SF_BASE_ADDR);
 }
 
 unsigned int sf_read_data(unsigned int addr, unsigned char len)
@@ -41,6 +60,7 @@ unsigned int sf_read_data(unsigned int addr, unsigned char len)
 	sf_cmd_addr.reg.addr = addr;
 	writel(sf_cmd_addr.uint32,SF_BASE_ADDR + SF_CMD_ADDR);
 
+
 	sf_ctrl.reg.data_len = len;
 	sf_ctrl.reg.addr_en =1;
 	sf_ctrl.reg.rw = 0;	
@@ -49,11 +69,11 @@ unsigned int sf_read_data(unsigned int addr, unsigned char len)
 		sf_ctrl.reg.data_len=4;
 	}
 	delay_us(TRANSFER_DELAY);
-	writeb(sf_ctrl.uint8,SF_BASE_ADDR + SF_CONTROL);
+	writel(sf_ctrl.uint32,SF_BASE_ADDR + SF_CONTROL);
 
 	//waitting for transfer have finished
 	do{
-		sf_ctrl.uint8 = readb(SF_BASE_ADDR+SF_CONTROL);
+		sf_ctrl.uint32 = readb(SF_BASE_ADDR+SF_CONTROL);
 		i++;
 		if(i>TIME_OUT_COUNTER)
 		{
@@ -84,10 +104,10 @@ unsigned short sf_read_status(void)
 	sf_ctrl.reg.rw = 0;	
 	sf_ctrl.reg.en_flag = 1;
 	delay_us(TRANSFER_DELAY);
-	writeb(sf_ctrl.uint8,SF_BASE_ADDR + SF_CONTROL);
+	writel(sf_ctrl.uint32,SF_BASE_ADDR + SF_CONTROL);
 	//waitting for transfer have finished
 	do{
-		sf_ctrl.uint8 = readb(SF_BASE_ADDR+SF_CONTROL);
+		sf_ctrl.uint32 = readb(SF_BASE_ADDR+SF_CONTROL);
 		i++;
 		if(i>TIME_OUT_COUNTER)
 		{
@@ -119,11 +139,11 @@ unsigned short sf_read_chip_id(void)
 	sf_ctrl.reg.rw = 0;	
 	sf_ctrl.reg.en_flag = 1;
 	delay_us(TRANSFER_DELAY);
-	writeb(sf_ctrl.uint8,SF_BASE_ADDR + SF_CONTROL);
+	writel(sf_ctrl.uint32,SF_BASE_ADDR + SF_CONTROL);
 
 	//waitting for transfer have finished
 	do{
-		sf_ctrl.uint8 = readb(SF_BASE_ADDR+SF_CONTROL);
+		sf_ctrl.uint32 = readb(SF_BASE_ADDR+SF_CONTROL);
 	}	
 	while(sf_ctrl.reg.en_flag);
 
@@ -145,11 +165,11 @@ void sf_write_enable(void)
 	sf_ctrl.reg.rw = 1;	
 	sf_ctrl.reg.en_flag = 1;
 	delay_us(TRANSFER_DELAY);
-	writeb(sf_ctrl.uint8,SF_BASE_ADDR + SF_CONTROL);
+	writel(sf_ctrl.uint32,SF_BASE_ADDR + SF_CONTROL);
 
 	//waitting for transfer have finished
 	do{
-		sf_ctrl.uint8 = readb(SF_BASE_ADDR+SF_CONTROL);
+		sf_ctrl.uint32 = readb(SF_BASE_ADDR+SF_CONTROL);
 		i++;
 		if(i>TIME_OUT_COUNTER)
 		{
@@ -185,11 +205,11 @@ void sf_write_data(unsigned int addr, unsigned int data, unsigned char len)
 		sf_ctrl.reg.data_len=4;
 	}  
 	delay_us(10);
-	writeb(sf_ctrl.uint8,SF_BASE_ADDR + SF_CONTROL);
+	writel(sf_ctrl.uint32,SF_BASE_ADDR + SF_CONTROL);
 
 	//waitting for transfer have finished
 	do{
-		sf_ctrl.uint8 = readb(SF_BASE_ADDR+SF_CONTROL);
+		sf_ctrl.uint32 = readb(SF_BASE_ADDR+SF_CONTROL);
 		i++;
 		if(i>TIME_OUT_COUNTER)
 		{
@@ -229,11 +249,11 @@ void sf_write_status(unsigned short data)
 	sf_ctrl.reg.rw = 1;	
 	sf_ctrl.reg.en_flag = 1;
 	delay_us(TRANSFER_DELAY);
-	writeb(sf_ctrl.uint8,SF_BASE_ADDR + SF_CONTROL);
+	writel(sf_ctrl.uint32,SF_BASE_ADDR + SF_CONTROL);
 
 	//waitting for transfer have finished
 	do{
-		sf_ctrl.uint8 = readb(SF_BASE_ADDR+SF_CONTROL);
+		sf_ctrl.uint32 = readb(SF_BASE_ADDR+SF_CONTROL);
 		i++;
 		if(i>TIME_OUT_COUNTER)
 		{
@@ -265,11 +285,11 @@ void sf_sector_erase(unsigned int addr)
 		sf_ctrl.reg.data_len=4;
 	}  
 	delay_us(10);
-	writeb(sf_ctrl.uint8,SF_BASE_ADDR + SF_CONTROL);
+	writel(sf_ctrl.uint32,SF_BASE_ADDR + SF_CONTROL);
 
 	//waitting for transfer have finished
 	do{
-		sf_ctrl.uint8 = readb(SF_BASE_ADDR+SF_CONTROL);
+		sf_ctrl.uint32 = readb(SF_BASE_ADDR+SF_CONTROL);
 		i++;
 		if(i>TIME_OUT_COUNTER)
 		{

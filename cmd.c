@@ -155,7 +155,8 @@ int do_dbg_print_info(char * cmd[], unsigned int param_count)
          printf("Shaders : 1536 Unified\n");
          printf("DirectX Support : 11.0\n");                                            
     }
-	sf_init();
+    ts_init();
+    sf_init();
     read_fw_version();
     read_PCIe();
     printf("DDR Version : DDR4\n");
