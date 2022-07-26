@@ -6,8 +6,8 @@
 #    http://make.mad-scientist.net/papers/advanced-auto-dependency-generation/
 ########
 
-C ?= 0
-CHOOSE_SYSTEM = $(shell echo $$(($(C))))
+F ?= 0
+CHOOSE_SYSTEM = $(shell echo $$(($(F))))
 OBJTREE := .objs/
 DEPDIR := .deps
 
