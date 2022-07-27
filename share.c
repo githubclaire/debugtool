@@ -117,12 +117,15 @@ void reg_get_comb_key(char* pch)
     //int comb_key = COMB_KEY_DOS_START;
     char ch = getch();
     *pch = '\0';
-
+    
+    //printf("%d",ch);
     if(ch == COMB_KEY_START)
     {
         char  ch1, ch2;
         ch1 = getch();
         ch2 = getch();
+        //printf("ch1 is %d",ch1);
+       // printf("ch2 is %d",ch2);
 
         if(ch1 == 91)
         {
@@ -170,7 +173,7 @@ void CToolGetInput(char* buffer, int size)
     int      bUserInput = 0;
 
     j = i = 0;
-
+    
     do{
         #ifdef __ubuntu__
         reg_get_comb_key(&ch);
@@ -184,17 +187,66 @@ void CToolGetInput(char* buffer, int size)
             //printf("%d",ch);
         } 
         #endif
-
+        //printf("%d",ch);
         if(ch != REG_KEY_ENTER)
         {
             if(ch == REG_KEY_UP)
             {
                 chTemp = get_cmd_from_his(TRUE);
-                //printf("cmd is %s\n",chTemp);
+                //printf("1、cmd is %s\n",chTemp);
+                /*
+                for(int x=0;x<sizeof(chTemp);x++){
+                      printf("chTemp[%d] is %d;\n",x,chTemp[x]);
+                }
+                */
                 if(chTemp != NULL)
                 {
                     bUserInput = FALSE;
+                    //printf("2、cmd is %s\n",buffer);
+                    /*
+                    for(int y=0;y<sizeof(buffer);y++){
+                      printf("buffer[%d] is %d;\n",y,buffer[y]);
+                    }
+                    printf("9、i is %d\n",i);
+                    printf("9、j is %d\n",j);
+                    */
                     if(strcmp(chTemp, buffer)!=0)
+                    {
+                        if(j != i)
+                        {
+                             printf("%s", &buffer[j]);
+                        }
+
+                        while(i > 0)
+                        {
+                            printf("%c", REG_KEY_BACKSPACE);
+                            printf("%c", REG_KEY_SPACE);
+                            printf("%c", REG_KEY_BACKSPACE);
+                            //printf("i is %d\n",i);
+                            i--;
+
+                        }
+                        
+                        strcpy(buffer, chTemp);
+                        i = strlen(chTemp);
+                       // printf("8、i is %d\n",i);
+                        printf("%s", chTemp);
+                        fflush(stdout);
+                        j = i;
+                        
+                    }
+                    if((strcmp(chTemp, buffer)==0)&&(i==0)&&(j==0)){
+                       strcpy(buffer, chTemp);
+                       i = strlen(chTemp);
+                       printf("%s", chTemp);
+                       fflush(stdout);
+                       j = i;
+                    }
+                    
+                }
+                else
+                {
+                    if(!bUserInput)
                     {
                         if(j != i)
                         {
@@ -208,12 +260,9 @@ void CToolGetInput(char* buffer, int size)
                             printf("%c", REG_KEY_BACKSPACE);
                             i--;
                         }
-
-                        strcpy(buffer, chTemp);
-                        i = strlen(chTemp);
-                        printf("%s", chTemp);
                         fflush(stdout);
                         j = i;
+                        buffer[0] = '\0';
                     }
                 }
             }
@@ -350,6 +399,7 @@ void CToolGetInput(char* buffer, int size)
 
     bInputValid = (strlen(buffer) == 0)?FALSE:TRUE;
     chTemp = get_last_cmd();
+    //printf("chtemp cmd is %s\n",chTemp);
 
     if(bInputValid && chTemp)
     {
@@ -363,6 +413,7 @@ void CToolGetInput(char* buffer, int size)
         add_cmd_to_history(buffer);
     }
 
+//add total_cmd
 /*
     for(i=0;i<CToolHisCmd.dwTotalCmd;i++)
     {
