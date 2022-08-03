@@ -28,28 +28,29 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
-      # Cross-build the project using the container
-      - name: linux tool compile using the container on x86 platform
-        uses: addnab/docker-run-action@v3
-        with:
-          image: dockerhy/linux-dbg:latest
-          options: --rm -v ${{ github.workspace }}:/usr/src/myapp -w /usr/src/myapp
-          run: |
-            make | tee build_linux.log
+#       # Cross-build the project using the container
+#       - name: linux tool compile using the container on x86 platform
+#         uses: addnab/docker-run-action@v3
+#         with:
+#           image: dockerhy/linux-dbg:latest
+#           options: --rm -v ${{ github.workspace }}:/usr/src/myapp -w /usr/src/myapp
+#           run: |
+#             make | tee build_linux.log
       - name: linux tool compile using the container on arm platform
         uses: addnab/docker-run-action@v3
         with:
           image: dockerhy/linux-dbg-arm:latest
           options: --platform linux/arm64/v8 --rm -v ${{ github.workspace }}:/usr/src/myapp -w /usr/src/myapp
           run: |
-            make SYSTEM=FT | tee build_linux.log            
+            make SYSTEM=FT | tee build_linux.log
+      
       - name: dos tool compile using the container
         uses: addnab/docker-run-action@v3
         with:
           image: dockerhy/watcom-docker:latest
           options: --rm -v ${{ github.workspace }}:/usr/src/myapp -w /usr/src/myapp
           run: |
-            wmake -f makefile_watcom | tee build_dos.log          
+            wmake -f makefile_watcom | tee build_dos.log
       - name: Tar files
         run: tar -czvf glendbg.tar.gz ./glendbg.exe ./*.ini
       - name: Archive glendbg
