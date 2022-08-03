@@ -7,7 +7,7 @@ on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
     tags:
-      - '*'
+      - 'v*'
     #branches: [ main ]
   pull_request:
     branches: [ main ]
@@ -22,6 +22,8 @@ jobs:
     name: Build with linux toolchain
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -72,16 +74,21 @@ jobs:
           path: |
             glenfly_tool_debug.tar.gz
             build_linux.log
-      - name: Tar files
-        run: tar -czvf glenfly_tool_debug_FT.tar.gz ./glenfly_tool_debug_FT ./*.ini
-      - name: Archive glenfly_tool_debug_FT
-        uses: actions/upload-artifact@v3
-        with:
-          name: glenfly_tool_debug_FT
-          path: |
-            glenfly_tool_debug_FT.tar.gz
-            build_linux_FT.log
+#       - name: Tar files
+#         run: tar -czvf glenfly_tool_debug_FT.tar.gz ./glenfly_tool_debug_FT ./*.ini
+#       - name: Archive glenfly_tool_debug_FT
+#         uses: actions/upload-artifact@v3
+#         with:
+#           name: glenfly_tool_debug_FT
+#           path: |
+#             glenfly_tool_debug_FT.tar.gz
+#             build_linux_FT.log
 
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: "glendbg.tar.gz,glenfly_tool_debug.tar.gz,build_*.log"
+#           bodyFile: "body.md"
+          token: ${{ secrets.GITHUB_TOKEN }}
 
   send:
     name: Send mail
