@@ -27,6 +27,9 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
+      
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
 
 #       # Cross-build the project using the container
 #       - name: linux tool compile using the container on x86 platform
