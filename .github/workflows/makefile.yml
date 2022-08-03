@@ -31,14 +31,14 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
 
-#       # Cross-build the project using the container
-#       - name: linux tool compile using the container on x86 platform
-#         uses: addnab/docker-run-action@v3
-#         with:
-#           image: dockerhy/linux-dbg:latest
-#           options: --rm -v ${{ github.workspace }}:/usr/src/myapp -w /usr/src/myapp
-#           run: |
-#             make | tee build_linux.log
+      # Cross-build the project using the container
+      - name: linux tool compile using the container on x86 platform
+        uses: addnab/docker-run-action@v3
+        with:
+          image: dockerhy/linux-dbg:latest
+          options: --rm -v ${{ github.workspace }}:/usr/src/myapp -w /usr/src/myapp
+          run: |
+            make | tee build_linux.log
       - name: linux tool compile using the container on arm platform
         uses: addnab/docker-run-action@v3
         with:
