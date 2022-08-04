@@ -57,21 +57,21 @@ jobs:
           run: |
             wmake -f makefile_watcom | tee build_dos.log
 
-      - name: Tar files
-        run: |
-          tar -czvf glendbg.tar.gz ./glendbg.exe
-          tar -czvf glenfly_tool_debug.tar.gz ./glenfly_tool_debug
-          tar -czvf glenfly_tool_debug_FT.tar.gz ./glenfly_tool_debug_FT
-      - name: Archive glendbg
+      #- name: Tar files
+      #  run: |
+      #    tar -czvf glendbg.tar.gz ./glendbg.exe
+      #    tar -czvf glenfly_tool_debug.tar.gz ./glenfly_tool_debug
+      #    tar -czvf glenfly_tool_debug_FT.tar.gz ./glenfly_tool_debug_FT
+      - name: Archive debugtool
         uses: actions/upload-artifact@v3
         with:
           name: debugtool
           path: |
             build_*.log
             *.ini
-            glendbg.tar.gz
-            glenfly_tool_debug_FT.tar.gz
-            glenfly_tool_debug.tar.gz        
+            glendbg.exe
+            glenfly_tool_debug
+            glenfly_tool_debug_FT        
 
   send:
     name: Send mail
