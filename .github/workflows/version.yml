@@ -66,6 +66,6 @@ jobs:
 
       - uses: ncipollo/release-action@v1
         with:
-          artifacts: "glendbg.tar.gz,glenfly_tool_debug.tar.gz,glenfly_tool_debug_FT.tar.gz,build_*.log"
+          artifacts: "glendbg.tar.gz,glenfly_tool_debug.tar.gz,glenfly_tool_debug_FT.tar.gz"
 #           bodyFile: "body.md"
           token: ${{ secrets.GITHUB_TOKEN }}

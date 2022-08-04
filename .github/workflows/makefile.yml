@@ -59,16 +59,17 @@ jobs:
 
       - name: Tar files
         run: |
-          tar -czvf glendbg.tar.gz ./glendbg.exe ./*.ini
-          tar -czvf glenfly_tool_debug.tar.gz ./glenfly_tool_debug ./*.ini
-          tar -czvf glenfly_tool_debug_FT.tar.gz ./glenfly_tool_debug_FT ./*.ini
+          tar -czvf glendbg.tar.gz ./glendbg.exe
+          tar -czvf glenfly_tool_debug.tar.gz ./glenfly_tool_debug
+          tar -czvf glenfly_tool_debug_FT.tar.gz ./glenfly_tool_debug_FT
       - name: Archive glendbg
         uses: actions/upload-artifact@v3
         with:
-          #name: glendbg
+          name: debugtool
           path: |
-            glendbg.tar.gz
             build_*.log
+            *.ini
+            glendbg.tar.gz
             glenfly_tool_debug_FT.tar.gz
             glenfly_tool_debug.tar.gz        
 
