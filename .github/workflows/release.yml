@@ -1,6 +1,6 @@
 # This is a basic workflow that is manually triggered
 
-name: release
+name: CI_release
 
 # Controls when the workflow will run
 on:
