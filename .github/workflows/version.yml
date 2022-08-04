@@ -27,7 +27,7 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      #- uses: actions/checkout@v3
+      - uses: actions/checkout@v3
       
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -40,9 +40,7 @@ jobs:
           options: --rm -v ${{ github.workspace }}:/usr/src/myapp -w /usr/src/myapp
           run: |
             make | tee build_linux.log
-#      - name: Tar files
-#        run: tar -czvf glenfly_tool_debug.tar.gz ./glenfly_tool_debug ./*.ini
-            
+        
       - name: linux tool compile using the container on arm platform
         uses: addnab/docker-run-action@v3
         with:
@@ -51,11 +49,6 @@ jobs:
           run: |
             make clean
             make SYSTEM=FT | tee build_linux_FT.log
-      - name: Tar files
-        uses: actions/checkout@v3
-        with:
-          run: |
-            tar -czvf glenfly_tool_debug_FT.tar.gz ./glenfly_tool_debug_FT ./*.ini
 
       - name: dos tool compile using the container
         uses: addnab/docker-run-action@v3
@@ -64,8 +57,12 @@ jobs:
           options: --rm -v ${{ github.workspace }}:/usr/src/myapp -w /usr/src/myapp
           run: |
             wmake -f makefile_watcom | tee build_dos.log
-#      - name: Tar files
-#        run: tar -czvf glendbg.tar.gz ./glendbg.exe ./*.ini
+            
+      - name: Tar files
+        run: |
+          tar -czvf glendbg.tar.gz ./glendbg.exe ./*.ini
+          tar -czvf glenfly_tool_debug.tar.gz ./glenfly_tool_debug ./*.ini
+          tar -czvf glenfly_tool_debug_FT.tar.gz ./glenfly_tool_debug_FT ./*.ini
 
       - uses: ncipollo/release-action@v1
         with:
