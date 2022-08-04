@@ -53,8 +53,6 @@ jobs:
             make SYSTEM=FT | tee build_linux_FT.log
       - name: Tar files
         run: tar -czvf glenfly_tool_debug_FT.tar.gz ./glenfly_tool_debug_FT ./*.ini
-      - name: Archive glenfly_tool_debug_FT
-
 
       - name: dos tool compile using the container
         uses: addnab/docker-run-action@v3
