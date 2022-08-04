@@ -54,7 +54,8 @@ jobs:
       - name: Tar files
         uses: actions/checkout@v3
         with:
-          run: tar -czvf glenfly_tool_debug_FT.tar.gz ./glenfly_tool_debug_FT ./*.ini
+          run: |
+            tar -czvf glenfly_tool_debug_FT.tar.gz ./glenfly_tool_debug_FT ./*.ini
 
       - name: dos tool compile using the container
         uses: addnab/docker-run-action@v3
