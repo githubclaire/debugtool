@@ -47,7 +47,7 @@ jobs:
           image: dockerhy/linux-dbg-arm:latest
           options: --platform linux/arm64/v8 --rm -v ${{ github.workspace }}:/usr/src/myapp -w /usr/src/myapp
           run: |
-            make clean
+            make clean SYSTEM=FT
             make SYSTEM=FT | tee build_linux_FT.log
 
       - name: dos tool compile using the container
