@@ -6,9 +6,7 @@ name: CI
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    tags:
-      - 'v*'
-    #branches: [ main ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
     
@@ -41,30 +39,7 @@ jobs:
           options: --rm -v ${{ github.workspace }}:/usr/src/myapp -w /usr/src/myapp
           run: |
             make | tee build_linux.log
-      - name: linux tool compile using the container on arm platform
-        uses: addnab/docker-run-action@v3
-        with:
-          image: dockerhy/linux-dbg-arm:latest
-          options: --platform linux/arm64/v8 --rm -v ${{ github.workspace }}:/usr/src/myapp -w /usr/src/myapp
-          run: |
-            make SYSTEM=FT | tee build_linux.log
       
-      - name: dos tool compile using the container
-        uses: addnab/docker-run-action@v3
-        with:
-          image: dockerhy/watcom-docker:latest
-          options: --rm -v ${{ github.workspace }}:/usr/src/myapp -w /usr/src/myapp
-          run: |
-            wmake -f makefile_watcom | tee build_dos.log
-      - name: Tar files
-        run: tar -czvf glendbg.tar.gz ./glendbg.exe ./*.ini
-      - name: Archive glendbg
-        uses: actions/upload-artifact@v3
-        with:
-          name: glendbg
-          path: |
-            glendbg.tar.gz
-            build_dos.log
       - name: Tar files
         run: tar -czvf glenfly_tool_debug.tar.gz ./glenfly_tool_debug ./*.ini
       - name: Archive glenfly_tool_debug
@@ -74,21 +49,44 @@ jobs:
           path: |
             glenfly_tool_debug.tar.gz
             build_linux.log
-#       - name: Tar files
-#         run: tar -czvf glenfly_tool_debug_FT.tar.gz ./glenfly_tool_debug_FT ./*.ini
-#       - name: Archive glenfly_tool_debug_FT
-#         uses: actions/upload-artifact@v3
-#         with:
-#           name: glenfly_tool_debug_FT
-#           path: |
-#             glenfly_tool_debug_FT.tar.gz
-#             build_linux_FT.log
-
-      - uses: ncipollo/release-action@v1
+            
+      - name: linux tool compile using the container on arm platform
+        uses: addnab/docker-run-action@v3
         with:
-          artifacts: "glendbg.tar.gz,glenfly_tool_debug.tar.gz,build_*.log"
-#           bodyFile: "body.md"
-          token: ${{ secrets.GITHUB_TOKEN }}
+          image: dockerhy/linux-dbg-arm:latest
+          options: --platform linux/arm64/v8 --rm -v ${{ github.workspace }}:/usr/src/myapp -w /usr/src/myapp
+          run: |
+            make clean
+            make SYSTEM=FT | tee build_linux_FT.log
+
+      - name: Tar files
+        run: tar -czvf glenfly_tool_debug_FT.tar.gz ./glenfly_tool_debug_FT ./*.ini
+      - name: Archive glenfly_tool_debug_FT
+        uses: actions/upload-artifact@v3
+        with:
+          name: glenfly_tool_debug_FT
+          path: |
+            glenfly_tool_debug_FT.tar.gz
+            build_linux_FT.log
+
+      - name: dos tool compile using the container
+        uses: addnab/docker-run-action@v3
+        with:
+          image: dockerhy/watcom-docker:latest
+          options: --rm -v ${{ github.workspace }}:/usr/src/myapp -w /usr/src/myapp
+          run: |
+            wmake -f makefile_watcom | tee build_dos.log
+
+      - name: Tar files
+        run: tar -czvf glendbg.tar.gz ./glendbg.exe ./*.ini
+      - name: Archive glendbg
+        uses: actions/upload-artifact@v3
+        with:
+          name: glendbg
+          path: |
+            glendbg.tar.gz
+            build_dos.log
+
 
   send:
     name: Send mail
@@ -152,6 +150,6 @@ jobs:
           # Optional converting Markdown to HTML (set content_type to text/html too):
           convert_markdown: true
           # Optional attachments:
-          attachments: glenfly_tool_debug.tar.gz
+          attachments: glenfly_tool_debug.tar.gz,glendbg.tar.gz,glenfly_tool_debug_FT.tar.gz
           # Optional priority: 'high', 'normal' (default) or 'low'
           priority: low

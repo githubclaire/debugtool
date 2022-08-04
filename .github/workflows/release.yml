@@ -42,13 +42,6 @@ jobs:
             make | tee build_linux.log
       - name: Tar files
         run: tar -czvf glenfly_tool_debug.tar.gz ./glenfly_tool_debug ./*.ini
-      - name: Archive glenfly_tool_debug
-        uses: actions/upload-artifact@v3
-        with:
-          name: glenfly_tool_debug
-          path: |
-            glenfly_tool_debug.tar.gz
-            build_linux.log
             
       - name: linux tool compile using the container on arm platform
         uses: addnab/docker-run-action@v3
@@ -61,12 +54,7 @@ jobs:
       - name: Tar files
         run: tar -czvf glenfly_tool_debug_FT.tar.gz ./glenfly_tool_debug_FT ./*.ini
       - name: Archive glenfly_tool_debug_FT
-        uses: actions/upload-artifact@v3
-        with:
-          name: glenfly_tool_debug_FT
-          path: |
-            glenfly_tool_debug_FT.tar.gz
-            build_linux_FT.log
+
 
       - name: dos tool compile using the container
         uses: addnab/docker-run-action@v3
@@ -77,16 +65,9 @@ jobs:
             wmake -f makefile_watcom | tee build_dos.log
       - name: Tar files
         run: tar -czvf glendbg.tar.gz ./glendbg.exe ./*.ini
-      - name: Archive glendbg
-        uses: actions/upload-artifact@v3
-        with:
-          name: glendbg
-          path: |
-            glendbg.tar.gz
-            build_dos.log
 
       - uses: ncipollo/release-action@v1
         with:
-          artifacts: "glendbg.tar.gz,glenfly_tool_debug.tar.gz,build_*.log"
+          artifacts: "glendbg.tar.gz,glenfly_tool_debug.tar.gz,glenfly_tool_debug_FT.tar.gz,build_*.log"
 #           bodyFile: "body.md"
           token: ${{ secrets.GITHUB_TOKEN }}
