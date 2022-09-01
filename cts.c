@@ -43,7 +43,7 @@ unsigned int mux_cal(unsigned int r, unsigned int d)
 void ct_pattern(unsigned int value, unsigned int *send_pattern, unsigned int *exp_data, unsigned int *exp_dqs)
 {
 
-    unsigned int a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, bg0, bg1, act_n, ba0, ba1, cke, odt, par, alert, cs, reset, clk, clk_c, clk_t, dm0, dm1;
+    unsigned int a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, bg0,act_n, ba0, ba1, cke, odt, par, alert, cs, reset, clk, clk_c, clk_t, dm0, dm1;
 
     unsigned int mt0, mt1, mt2, mt3, mt4, mt5, mt6, mt7, mt8, mt9;
     *exp_data = 0;

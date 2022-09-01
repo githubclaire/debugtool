@@ -23,7 +23,7 @@
 #define SERIAL_HDMI0	0x88AA
 #define SERIAL_HDMI1	0x89F8 
 
-#define EDID_DEVADDR    0xA0
+#define EDID_DEVADDR    0xAA
 #define EDID_BUFFER_SIZE 128*2
 
 #define DELAYTIME  2
@@ -47,7 +47,7 @@ int i2c_read_data_page(unsigned char addr, unsigned int len, unsigned char *data
 int i2c_write_data(unsigned char addr, unsigned char data);
 int i2c_write_data_page(unsigned char addr, unsigned int len, unsigned char *data);
 void i2c_stop();
-void i2c_prog(int argc, char *argv[]);
+int i2c_prog(int argc, char *argv[]);
 void i2c_help_info(void);
 
 #endif
