@@ -6,9 +6,7 @@ name: CI
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    tags:
-      - '*'
-    #branches: [ main ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
     
@@ -22,11 +20,16 @@ jobs:
     name: Build with linux toolchain
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
+      
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
 
       # Cross-build the project using the container
       - name: linux tool compile using the container on x86 platform
@@ -36,48 +39,39 @@ jobs:
           options: --rm -v ${{ github.workspace }}:/usr/src/myapp -w /usr/src/myapp
           run: |
             make | tee build_linux.log
+                
       - name: linux tool compile using the container on arm platform
         uses: addnab/docker-run-action@v3
         with:
           image: dockerhy/linux-dbg-arm:latest
           options: --platform linux/arm64/v8 --rm -v ${{ github.workspace }}:/usr/src/myapp -w /usr/src/myapp
           run: |
-            make SYSTEM=FT | tee build_linux.log            
+            make clean SYSTEM=FT
+            make SYSTEM=FT | tee build_linux_FT.log
+
       - name: dos tool compile using the container
         uses: addnab/docker-run-action@v3
         with:
           image: dockerhy/watcom-docker:latest
           options: --rm -v ${{ github.workspace }}:/usr/src/myapp -w /usr/src/myapp
           run: |
-            wmake -f makefile_watcom | tee build_dos.log          
-      - name: Tar files
-        run: tar -czvf glendbg.tar.gz ./glendbg.exe ./*.ini
-      - name: Archive glendbg
-        uses: actions/upload-artifact@v3
-        with:
-          name: glendbg
-          path: |
-            glendbg.tar.gz
-            build_dos.log
-      - name: Tar files
-        run: tar -czvf glenfly_tool_debug.tar.gz ./glenfly_tool_debug ./*.ini
-      - name: Archive glenfly_tool_debug
-        uses: actions/upload-artifact@v3
-        with:
-          name: glenfly_tool_debug
-          path: |
-            glenfly_tool_debug.tar.gz
-            build_linux.log
-      - name: Tar files
-        run: tar -czvf glenfly_tool_debug_FT.tar.gz ./glenfly_tool_debug_FT ./*.ini
-      - name: Archive glenfly_tool_debug_FT
-        uses: actions/upload-artifact@v3
-        with:
-          name: glenfly_tool_debug_FT
-          path: |
-            glenfly_tool_debug_FT.tar.gz
-            build_linux_FT.log
+            wmake -f makefile_watcom | tee build_dos.log
 
+      #- name: Tar files
+      #  run: |
+      #    tar -czvf glendbg.tar.gz ./glendbg.exe
+      #    tar -czvf glenfly_tool_debug.tar.gz ./glenfly_tool_debug
+      #    tar -czvf glenfly_tool_debug_FT.tar.gz ./glenfly_tool_debug_FT
+      - name: Archive debugtool
+        uses: actions/upload-artifact@v3
+        with:
+          name: debugtool
+          path: |
+            build_*.log
+            *.ini
+            glendbg.exe
+            glenfly_tool_debug
+            glenfly_tool_debug_FT        
 
   send:
     name: Send mail
@@ -141,6 +135,6 @@ jobs:
           # Optional converting Markdown to HTML (set content_type to text/html too):
           convert_markdown: true
           # Optional attachments:
-          attachments: glenfly_tool_debug.tar.gz
+          attachments: glenfly_tool_debug.tar.gz,glendbg.tar.gz,glenfly_tool_debug_FT.tar.gz
           # Optional priority: 'high', 'normal' (default) or 'low'
           priority: low

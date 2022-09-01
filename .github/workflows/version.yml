@@ -1,0 +1,71 @@
+# This is a basic workflow that is manually triggered
+
+name: CI_release
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [ main ]
+    
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    name: Build with linux toolchain
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+      
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      # Cross-build the project using the container
+      - name: linux tool compile using the container on x86 platform
+        uses: addnab/docker-run-action@v3
+        with:
+          image: dockerhy/linux-dbg:latest
+          options: --rm -v ${{ github.workspace }}:/usr/src/myapp -w /usr/src/myapp
+          run: |
+            make | tee build_linux.log
+        
+      - name: linux tool compile using the container on arm platform
+        uses: addnab/docker-run-action@v3
+        with:
+          image: dockerhy/linux-dbg-arm:latest
+          options: --platform linux/arm64/v8 --rm -v ${{ github.workspace }}:/usr/src/myapp -w /usr/src/myapp
+          run: |
+            make clean SYSTEM=FT
+            make SYSTEM=FT | tee build_linux_FT.log
+
+      - name: dos tool compile using the container
+        uses: addnab/docker-run-action@v3
+        with:
+          image: dockerhy/watcom-docker:latest
+          options: --rm -v ${{ github.workspace }}:/usr/src/myapp -w /usr/src/myapp
+          run: |
+            wmake -f makefile_watcom | tee build_dos.log
+            
+      - name: Tar files
+        run: |
+          tar -czvf glendbg.tar.gz ./glendbg.exe ./*.ini
+          tar -czvf glenfly_tool_debug.tar.gz ./glenfly_tool_debug ./*.ini
+          tar -czvf glenfly_tool_debug_FT.tar.gz ./glenfly_tool_debug_FT ./*.ini
+
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: "glendbg.tar.gz,glenfly_tool_debug.tar.gz,glenfly_tool_debug_FT.tar.gz"
+#           bodyFile: "body.md"
+          token: ${{ secrets.GITHUB_TOKEN }}
