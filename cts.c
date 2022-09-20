@@ -2,6 +2,7 @@
 
 extern VIDEO_PCI_PROP video_pci_prop;
 unsigned char channel = 0;
+unsigned int flag_1020 = 0;
 
 // ct test function start
 
@@ -43,7 +44,7 @@ unsigned int mux_cal(unsigned int r, unsigned int d)
 void ct_pattern(unsigned int value, unsigned int *send_pattern, unsigned int *exp_data, unsigned int *exp_dqs)
 {
 
-    unsigned int a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, bg0,act_n, ba0, ba1, cke, odt, par, alert, cs, reset, clk, clk_c, clk_t, dm0, dm1;
+    unsigned int a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, bg0, act_n, ba0, ba1, cke, odt, par, alert, cs, reset, clk, clk_c, clk_t, dm0, dm1;
 
     unsigned int mt0, mt1, mt2, mt3, mt4, mt5, mt6, mt7, mt8, mt9;
     *exp_data = 0;
@@ -82,10 +83,12 @@ void ct_pattern(unsigned int value, unsigned int *send_pattern, unsigned int *ex
     dm0 = (value >> 1) & 0x1;
     // bg1=(value>>0) & 0x1;
     dm1 = (value >> 2) & 0x1;
-    if (clk_c == 0){
+    if (clk_c == 0)
+    {
         clk_t = 1;
     }
-    else{
+    else
+    {
         clk_t = 0;
     }
     // mt=dqs_t
@@ -143,113 +146,143 @@ void ct_test_fail_position(unsigned int dq, unsigned int fail_val)
             switch (mt)
             {
             case 0:
-                if (b == 0){
+                if (b == 0)
+                {
                     printf("fail at byte%d, address-> A1\n", byte_val);
                 }
-                else if (b == 1){
+                else if (b == 1)
+                {
                     printf("fail at byte%d, address-> A6\n", byte_val);
                 }
-                else if (b == 2){
+                else if (b == 2)
+                {
                     printf("fail at byte%d, address-> PAR\n", byte_val);
                 }
                 break;
             case 1:
-                if (b == 0){
+                if (b == 0)
+                {
                     printf("fail at byte%d, address-> A8\n", byte_val);
                 }
-                else if (b == 1){
+                else if (b == 1)
+                {
                     printf("fail at byte%d, address-> Alert\n", byte_val);
                 }
-                else if (b == 2){
+                else if (b == 2)
+                {
                     printf("fail at byte%d, address-> A9\n", byte_val);
                 }
                 break;
 
             case 2:
-                if (b == 0){
+                if (b == 0)
+                {
                     printf("fail at byte%d, address-> A2\n", byte_val);
                 }
-                else if (b == 1){
+                else if (b == 1)
+                {
                     printf("fail at byte%d, address-> A5\n", byte_val);
                 }
-                else if (b == 2){
+                else if (b == 2)
+                {
                     printf("fail at byte%d, address-> A13\n", byte_val);
                 }
                 break;
             case 3:
-                if (b == 0){
+                if (b == 0)
+                {
                     printf("fail at byte%d, address-> A0\n", byte_val);
                 }
-                else if (b == 1){
+                else if (b == 1)
+                {
                     printf("fail at byte%d, address-> A7\n", byte_val);
                 }
-                else if (b == 2){
+                else if (b == 2)
+                {
                     printf("fail at byte%d, address-> A11\n", byte_val);
                 }
                 break;
             case 4:
-                if (b == 0){
+                if (b == 0)
+                {
                     printf("fail at byte%d, address-> CLK_C\n", byte_val);
                 }
-                else if (b == 1){
+                else if (b == 1)
+                {
                     printf("fail at byte%d, address-> ODT\n", byte_val);
                 }
-                else if (b == 2){
+                else if (b == 2)
+                {
                     printf("fail at byte%d, address-> A15\n", byte_val);
                 }
                 break;
             case 5:
-                if (b == 0){
+                if (b == 0)
+                {
                     printf("fail at byte%d, address-> CKE\n", byte_val);
                 }
-                else if (b == 1){
+                else if (b == 1)
+                {
                     printf("fail at byte%d, address-> A16\n", byte_val);
                 }
-                else if (b == 2){
+                else if (b == 2)
+                {
                     printf("fail at byte%d, address-> A10\n", byte_val);
                 }
                 break;
             case 6:
-                if (b == 0){
+                if (b == 0)
+                {
                     printf("fail at byte%d, address-> Act_n\n", byte_val);
                 }
-                else if (b == 1){
+                else if (b == 1)
+                {
                     printf("fail at byte%d, address-> A4\n", byte_val);
                 }
-                else if (b == 2){
+                else if (b == 2)
+                {
                     printf("fail at byte%d, address-> BA1\n", byte_val);
                 }
                 break;
             case 7:
-                if (b == 0){
+                if (b == 0)
+                {
                     printf("fail at byte%d, address-> CLK_t\n", byte_val);
                 }
-                else if (b == 1){
+                else if (b == 1)
+                {
                     printf("fail at byte%d, address-> DM0\n", byte_val);
                 }
-                else if (b == 2){
+                else if (b == 2)
+                {
                     printf("fail at byte%d, address-> DM1\n", byte_val);
                 }
                 break;
             case 8:
-                if (b == 0){
+                if (b == 0)
+                {
                     printf("fail at byte%d, address-> A14\n", byte_val);
                 }
-                else if (b == 1){
+                else if (b == 1)
+                {
                     printf("fail at byte%d, address-> A12\n", byte_val);
                 }
-                else if (b == 2){
+                else if (b == 2)
+                {
                     printf("fail at byte%d, address-> BA0\n", byte_val);
                 }
                 break;
             case 9:
-                if (b == 0){
+                if (b == 0)
+                {
                     printf("fail at byte%d, address-> BG0\n", byte_val);
                 }
-                else if (b == 1){
+                else if (b == 1)
+                {
                     printf("fail at byte%d, address-> A3\n", byte_val);
                 }
-                else if (b == 2){
+                else if (b == 2)
+                {
                     printf("fail at byte%d, address-> Reset\n", byte_val);
                 }
                 break;
@@ -260,7 +293,9 @@ void ct_test_fail_position(unsigned int dq, unsigned int fail_val)
 
 void ct_test_start(unsigned int value, unsigned int *exp_dq, unsigned int *exp_dqs, unsigned int *dqs0_7, unsigned int *dq0_31, unsigned int *dq32_63, unsigned int channel)
 {
-    unsigned int send_pattern = 0, BASE_REG = 0xd000;
+    // unsigned int send_pattern=0,BASE_REG=0xd000;
+    unsigned int send_pattern = 0, BASE_REG = 0xd000, tem_dq56_63 = 0, tem_dq48_55 = 0, tem_dqs6 = 0, tem_dqs7 = 0;
+
     // unsigned int temp = 0x00000000;
     switch (channel)
     {
@@ -293,18 +328,30 @@ void ct_test_start(unsigned int value, unsigned int *exp_dq, unsigned int *exp_d
     // temp = readl(mapped_base+BASE_REG+0x0314);
     // printf("0x0314 data = %x\n",temp);
     *dqs0_7 = readl(video_pci_prop.mapped_mmioBase + BASE_REG + 0x02c8) & 0xff; // when D240[8]=1,D2C8[7:0]=DQS_ZI[7:0]
-    // udelay(1000);
-    // printf("dqs0_7 = %x \n",dqs0_7);
     *dq0_31 = readl(video_pci_prop.mapped_mmioBase + BASE_REG + 0x02cc);
-    // udelay(1000);
-    // printf("dq0_31 = %x \n",*dq0_31);
     *dq32_63 = readl(video_pci_prop.mapped_mmioBase + BASE_REG + 0x02d0);
-    // udelay(1000);
-    // printf("dq32_63 = %x \n",*dq32_63);
 
-    writel(0x080, video_pci_prop.mapped_mmioBase + BASE_REG + 0x0240);
+    if (video_pci_prop.DeviceId == 0x3d02){
+        tem_dqs6 = ((*dqs0_7) & 0x80) >> 1;
+        tem_dqs7 = ((*dqs0_7) & 0x40) << 1;
+        *dqs0_7 = ((*dqs0_7) & 0x3f) | tem_dqs7 | tem_dqs6;
+
+        // udelay(1000);
+        // printf("dqs0_7 = %x \n",dqs0_7);
+
+        // udelay(1000);
+        // printf("dq0_31 = %x \n",*dq0_31);
+
+        // udelay(1000);
+        // printf("dq32_63 = %x \n",*dq32_63);
+        tem_dq56_63 = ((*dq32_63) & 0x00ff0000) << 8;
+        tem_dq48_55 = ((*dq32_63) & 0xff000000) >> 8;
+        *dq32_63 = ((*dq32_63) & 0x0000ffff) | tem_dq48_55 | tem_dq56_63;
+    }
+    writel(0x080,video_pci_prop.mapped_mmioBase+BASE_REG+0x0240);
     // udelay(1000);
 }
+
 void ct_test_s(unsigned int channel)
 {
 
@@ -323,7 +370,7 @@ void ct_test_s(unsigned int channel)
         // work around: delete the first data
         if (i >= 1)
         {
-            printf("exp_dq=%x, dq0_31=%x, dq32_63=%x, exp_dqs=%x, dqs0_7=%x\n", exp_dq, dq0_31, dq32_63, exp_dqs, dqs0_7);
+            //printf("exp_dq=%x, dq0_31=%x, dq32_63=%x, exp_dqs=%x, dqs0_7=%x\n", exp_dq, dq0_31, dq32_63, exp_dqs, dqs0_7);
             for (x = 0; x <= 31; x++)
             {
                 if (((exp_dq >> x) & 0x1) != ((dq0_31 >> x) & 0x1))
@@ -353,10 +400,12 @@ void ct_test_s(unsigned int channel)
     printf("dq_res_save_h = %x\n", dq_res_save_h);
     // printf("dqs_res_save = %x\n",dqs_res_save);
 
-    if ((dq_res_save_l == 0) && (dq_res_save_h == 0) && (dqs_res_save == 0)){
+    if ((dq_res_save_l == 0) && (dq_res_save_h == 0) && (dqs_res_save == 0))
+    {
         printf("####CT test  pass####\n");
     }
-    else{
+    else
+    {
         printf("####CT test  FAIL####\n");
     }
     if ((dq_res_save_l == 0xffffffff) && (dq_res_save_h == 0xffffffff) && (dqs_res_save == 0xff))
@@ -378,10 +427,12 @@ void ct_test_s(unsigned int channel)
                     gold_find = 0;
                     for (i = 0; i <= 7; i++)
                     {
-                        if (((dqs_res_save >> i) & 0x1) == 0x1){
+                        if (((dqs_res_save >> i) & 0x1) == 0x1)
+                        {
                             status &= 1;
                         }
-                        else{
+                        else
+                        {
                             status &= 0;
                         }
                     } // if dqs_res_save has bit value = 0,then status=0, means exit ddr ic write read correct ,means A14,A12,BA0,BG0,A3,Reset ok
@@ -516,6 +567,10 @@ void ct_test_s(unsigned int channel)
 
 void cts_test(int argc, char *argv[])
 {
+    if ((argc == 2) && (strcmp(argv[1], "-d") == 0))
+    {
+        flag_1020 = 1; // for 1020 designer not change;
+    }
     channel = readl(video_pci_prop.mapped_mmioBase + 0x49024);
     switch (channel)
     {
@@ -551,5 +606,5 @@ void cts_test(int argc, char *argv[])
         printf("##############################  MIU0 CT test  ###########################\n");
         ct_test_s(0);
     }
-    //return 0;
+    // return 0;
 }
