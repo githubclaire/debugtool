@@ -149,7 +149,31 @@ void read_PCIe(void)
 
 void read_fw_version(void)
 {
-	unsigned int i, data;
+	unsigned int i, data,data_pmp,data_pmp_len,j;
+	char data_pmp_str;
+	//for pmp version;
+	if (video_pci_prop.VenderId == 0x6766 && video_pci_prop.DeviceId == 0x3d02)     //1020 4byte temp
+	{
+        printf("PMP Version : GF00");
+		data_pmp = sf_read_data(0x24,4);
+	    for(j=0;j<4;j++){
+	       data_pmp_str = hex_to_char((data_pmp>>(j*8))&0xff);
+		   printf("%c",data_pmp_str);
+	    }	
+	}
+	if (video_pci_prop.VenderId == 0x6766 && video_pci_prop.DeviceId == 0x3d00)       //10c0  5bytes temp
+	{
+		printf("PMP Version : BLD");
+		data_pmp_len = 5;
+		for(j=0;j<data_pmp_len;j++){
+		   data_pmp = sf_read_data((0x24+j),1);
+	       data_pmp_str = hex_to_char(data_pmp);
+		   printf("%c",data_pmp_str);
+	    }	
+
+	}
+    printf("\n");
+	//for viobs;
 	data = sf_read_data(0xf010,4);
 	printf("Vbios Version : ");	
 	for(i = 0;i<3;i++)

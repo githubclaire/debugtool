@@ -23,7 +23,28 @@ unsigned int StoH(char * s)
 	}
 	return hdata;
 }
+unsigned char hex_to_char(unsigned char hex_num)
+{
+    if ((hex_num>=0x30) && (hex_num<=0x39))
+    {
+        /* code */
+        hex_num = '0'+ hex_num - 0x30;
+    }
+    else if ((hex_num>=0x41) && (hex_num<=0x5A))
+    {
+        /* code */
+        hex_num = 'A' + (hex_num - 0x41);
+    }
+    else if ( (hex_num>=0x61) && (hex_num<=0x7A))
+    {
+        /* code */
+        hex_num = 'a' + (hex_num - 0x61);
+    }
+    else
+        hex_num = 0xff;
+    return hex_num;
 
+}
 #ifdef __ubuntu__
 void udelay(int cont)
 {

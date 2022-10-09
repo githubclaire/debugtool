@@ -14,6 +14,7 @@ void mdelay(int cont);
 //int atoi(const char *s);
 //unsigned int StoD(unsigned char * s);
 unsigned int StoH(char * s);
+unsigned char hex_to_char(unsigned char hex_num);
 int tolower(int c);
 unsigned long htoi(const char *s);
 void write8(unsigned int index, unsigned char value);
