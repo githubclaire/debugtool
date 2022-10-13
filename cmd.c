@@ -212,6 +212,7 @@ int do_dbg_print_info(char *cmd[], unsigned int param_count)
 	read_bitwidth();
 	printf("Memory Clk : %d MHz\n", get_mpll());
 	printf("Elite Clk : %d MHz\n", get_vepll(EPLL_REG));
+	printf("VIDEO Clk : %d MHz\n", get_vepll(VPLL_REG));
 	printf("Temp : %d C\n", dout_to_temp(GetTemperature()) / 1000);
 	printf("voltage : %d mV\n", (GetVoltage() * 1000 + 1157200) / 1869);
 	printf("FAN1 Speed:%d RPM\n", get_fs_speed(1));
