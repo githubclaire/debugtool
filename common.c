@@ -240,13 +240,13 @@ int ReadMMIO(unsigned int addr,int size)
 	switch(size)
 	{
 		case 0:
-			value = *(unsigned char*)(video_pci_prop.MmioBase + addr);
+			value = *(unsigned char*)(video_pci_prop.mapped_mmioBase + addr);
 			break;			
 		case 1:
-			value = *(unsigned short*)(video_pci_prop.MmioBase+addr);
+			value = *(unsigned short*)(video_pci_prop.mapped_mmioBase+addr);
 			break;			
 		case 2:
-			value = *(unsigned int*)(video_pci_prop.MmioBase+addr);
+			value = *(unsigned int*)(video_pci_prop.mapped_mmioBase+addr);
 	}
 
   return value;
