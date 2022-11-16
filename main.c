@@ -60,6 +60,9 @@ int main(int argc, char *argv[])
     int id_index = 16;
     int no_config_file = TRUE;
     char* config_file_name = "glendbg.ini";
+    struct stat t_stat;
+    stat("glenfly_tool_debug", &t_stat);
+    printf("Version date is: %s", ctime(&t_stat.st_mtime));
     
     init_config_parameters(&config);
 

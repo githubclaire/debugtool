@@ -297,6 +297,9 @@ void sf_sector_erase(unsigned int addr)
 void sf_flash_test(int argc, char *argv[])
 {
 	int sector_num = 1;
+	unsigned int data;
+	unsigned int addr;
+	unsigned char len;
 
     if(strcmp(argv[1],"-f")==0 || strcmp(argv[1],"-F")==0)
     {
@@ -306,6 +309,15 @@ void sf_flash_test(int argc, char *argv[])
 		}
         sf_sector_erase(sector_num*FP_SECTOR_SIZE);
     }
+	else if(strcmp(argv[1],"-r")==0 || strcmp(argv[1],"-R")==0){
+        addr = atoi(argv[2]);
+        len = atoi(argv[3]);
+		data=sf_read_data(addr,len);
+		printf("sf read data is 0x%x\n", data);
+	}
+	else{
+		sf_help_info();
+	}
 }
 
 void sf_help_info(void)

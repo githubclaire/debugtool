@@ -5,6 +5,20 @@ extern VIDEO_PCI_PROP video_pci_prop;
 
 #define is_digit(c)	((c) >= '0' && (c) <= '9')
 
+unsigned int StoD(unsigned char * s)
+{
+	unsigned int hdata;
+	int i = 0;
+	hdata = 0;
+	while(s[i] != '\0')
+	{
+		if(s[i] >= '0' && s[i] <= '9')
+			hdata = hdata*10 + (s[i] - 0x30);			
+		i++;
+	}
+	return hdata;
+}
+
 unsigned int StoH(char * s)
 {
 	unsigned int hdata;

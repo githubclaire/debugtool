@@ -328,6 +328,7 @@ void helpinfo(void)
 	printf("  vcore      --- print vcore\n");
 	printf("  clk        --- read/write clock\n");
 	printf("  memtest    --- miu test connection\n");
+	printf("  sf         --- flash read and write\n");
 	printf("  prog       --- program rom to flash\n");
 	printf("  dump       --- dump data from flash saved to file\n");
 	printf("  mmio       --- read/write register; -m read more registers\n");

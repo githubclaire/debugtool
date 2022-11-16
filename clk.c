@@ -378,30 +378,42 @@ void clk_prog(int argc, char *argv[])
     {
         if ((strcmp(argv[1], "-f") == 0 || strcmp(argv[1], "-F") == 0) && (strcmp(argv[2], "e") == 0 || strcmp(argv[2], "E") == 0))
         {
-            int tem;
-            tem = atoi(argv[3]);
-            set_epll(tem * 2);
-            mdelay(1);
-            fclk = get_vepll(EPLL_REG);
-            printf("EPll:%d MHz\n", fclk);
-            fclk_cal_tem = fclk_test(tem * 2);
-            // printf("fclk_cal_tem %d\n",fclk_cal_tem);
-            // printf("fclk_cal_tem = %d\n",fclk_cal_tem);
-            // fclk_cal = fclk_test(tem*2);
-            while (fclk_cal <= fclk_cal_tem)
+            if(video_pci_prop.VenderId == 0x6766 && video_pci_prop.DeviceId == 0x3d00)
             {
-                fclk_cal = fclk_test(tem * 2 + count);
-                count++;
+                int tem;
+                tem = atoi(argv[3]);
+                set_epll(tem*2);
+                mdelay(1);
+                fclk = get_vepll(EPLL_REG);
+                printf("EPll:%d MHz\n",fclk);
+
+                set_vpll(tem*2);
+                mdelay(1);
+                fclk = get_vepll(VPLL_REG);
+                printf("VPll:%d MHz\n",fclk);
+
+                set_evclk(StoD(argv[3])*10000,StoD(argv[3])*10000);
             }
-            // printf("count value: %d\n",count);
-            // printf("fclk_cal value = %d\n",fclk_cal);
-            set_vpll(tem * 2 + count - 1);
-            mdelay(1);
-            fclk = get_vepll(VPLL_REG);
-            printf("VPll:%d MHz\n", fclk);
-            // printf("StoD(argv[3])= %d \n", StoD(argv[3])*10000);
-            // set_evclk(StoD(argv[3])*10000,StoD(argv[3]+(count+1)/2)*10000);
-            set_evclk(StoH(argv[3]) * 10000, (StoH(argv[3]) + (count + 1) / 2) * 10000);
+            if(video_pci_prop.VenderId == 0x6766 && video_pci_prop.DeviceId == 0x3d02)
+            {
+                int tem;
+                tem = atoi(argv[3]);
+                set_epll(tem*2);
+                mdelay(1);
+                fclk = get_vepll(EPLL_REG);
+                printf("EPll:%d MHz\n",fclk);
+                fclk_cal_tem = fclk_test(tem*2);
+                while (fclk_cal<=fclk_cal_tem)
+                {
+                    fclk_cal = fclk_test(tem*2+count);
+                    count++;
+                }         
+                set_vpll(tem*2+count-1);
+                mdelay(1);
+                fclk = get_vepll(VPLL_REG);
+                printf("VPll:%d MHz\n",fclk);
+                set_evclk(StoD(argv[3])*10000,(StoD(argv[3])+(count+1)/2)*10000);
+            } 
         }
     }
     /*
