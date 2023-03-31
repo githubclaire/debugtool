@@ -453,7 +453,7 @@ void HdcpEfuseReadWCDWord(unsigned int data)
         unsigned int water_id_2 = (data >> 8) & 0xf;
         unsigned int x = (data >> 16) & 0xf;
         unsigned int y = (data >> 24) & 0xf;
-        printf("Water id:%x%x\n", water_id_1, water_id_2);
+        printf("Wafer id:%x%x\n", water_id_1, water_id_2);
         printf("(X,Y)=(%x,%x)\n", x, y);
 }
 void HdcpEfuseReadLWord(unsigned int data1, unsigned int data) // data1:0x7a;data:0x7B
