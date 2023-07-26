@@ -12,14 +12,20 @@ docker pull dockerhy/watcom-docker
 ````
 docker run --rm -v %cd%:/usr/src/myapp -w /usr/src/myapp dockerhy/watcom-docker wmake -f makefile_watcom
 ````
-# Build linux tool with docker in windows
+# Build linux tool on x86 platform with docker in windows
  ````
 docker pull dockerhy/linux-dbg
 ````
 ````
 docker run --rm -v %cd%:/usr/src/myapp -w /usr/src/myapp dockerhy/linux-dbg make
 ````
-
+# Build linux tool on arm platform with docker in windows
+ ````
+docker pull dockerhy/linux-dbg-arm
+````
+````
+docker run --rm -v %cd%:/usr/src/myapp -w /usr/src/myapp dockerhy/linux-dbg-arm make
+````
 # Tool Usage
 print help info
 ````
