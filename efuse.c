@@ -449,12 +449,14 @@ void HdcpEfuseReadssiddDWord(unsigned int data)
 // added by cheerychen 2021.11.12
 void HdcpEfuseReadWCDWord(unsigned int data)
 {
-        unsigned int water_id_1 = (data >> 4) & 0xf; // water_id
-        unsigned int water_id_2 = (data >> 8) & 0xf;
-        unsigned int x = (data >> 16) & 0xf;
-        unsigned int y = (data >> 24) & 0xf;
-        printf("Wafer id:%x%x\n", water_id_1, water_id_2);
-        printf("(X,Y)=(%x,%x)\n", x, y);
+        unsigned int water_id_1=(data>>4)&0xf;  //water_id
+        unsigned int water_id_2=(data>>8)&0xf;
+        unsigned int x=(data>>12)&0xff;
+	unsigned int y=(data>>20)&0xff;
+	unsigned int x_1=((x<<4)&0xff)+((x>>4)&0xff);
+	unsigned int y_1=((y<<4)&0xff)+((y>>4)&0xff);
+	printf("Wafer id:%x%x\n",water_id_1,water_id_2);
+	printf("(X,Y)=(%x,%x)\n",x_1,y_1);
 }
 void HdcpEfuseReadLWord(unsigned int data1, unsigned int data) // data1:0x7a;data:0x7B
 {

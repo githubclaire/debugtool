@@ -113,7 +113,7 @@ int do_dbg_mmio(char *cmd[], unsigned int param_count)
 		writel(reg_data, video_pci_prop.mapped_mmioBase + reg_index);
 		printf("\nWrite MMIO %x = 0x%08x Done.\n", reg_index, reg_data);
 	}
-	else if (param_count == 4)
+	else if (param_count >= 4)
 	{
 		// ADD MORE REGISTER READ; non-sequence
 		if (strcmp(cmd[1], "-m") == 0)
